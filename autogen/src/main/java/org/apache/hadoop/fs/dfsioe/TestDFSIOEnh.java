@@ -40,6 +40,8 @@ import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.dfsioe.Analyzer._Mapper;
 import org.apache.hadoop.fs.dfsioe.Analyzer._Reducer;
 
+import java.util.Arrays;
+
 /**
  * Enhanced Distributed i/o benchmark.
  * This is an enhanced version of original DFSIO benchmark.
@@ -94,6 +96,58 @@ public class TestDFSIOEnh extends Configured implements Tool {
   private static final String DEFAULT_RES_FILE_NAME = "TestDFSIOEnh_results.log";
 
   private static Configuration fsConfig = new Configuration();
+
+private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
+		      boolean overwrite) throws IOException {
+		    if (dstFS.exists(dst)) {
+		      FileStatus sdst = dstFS.getFileStatus(dst);
+		      if (sdst.isDirectory()) {
+		        if (null == srcName) {
+		          throw new IOException("Target " + dst + " is a directory");
+		        }
+		        return checkDest(null, dstFS, new Path(dst, srcName), overwrite);
+		      } else if (!overwrite) {
+		        throw new IOException("Target " + dst + " already exists");
+		      }
+		    }
+		    return dst;
+		  }
+	
+	private static boolean copyMerge(FileSystem srcFS, Path srcDir, FileSystem dstFS, Path dstFile, boolean deleteSource,
+			Configuration conf, String addString) throws IOException {
+		dstFile = checkDest(srcDir.getName(), dstFS, dstFile, false);
+
+		if (!srcFS.getFileStatus(srcDir).isDirectory())
+			return false;
+
+		OutputStream out = dstFS.create(dstFile);
+
+		try {
+			FileStatus contents[] = srcFS.listStatus(srcDir);
+			Arrays.sort(contents);
+			for (int i = 0; i < contents.length; i++) {
+				if (contents[i].isFile()) {
+					InputStream in = srcFS.open(contents[i].getPath());
+					try {
+						IOUtils.copyBytes(in, out, conf, false);
+						if (addString != null)
+							out.write(addString.getBytes("UTF-8"));
+
+					} finally {
+						in.close();
+					}
+				}
+			}
+		} finally {
+			out.close();
+		}
+
+		if (deleteSource) {
+			return srcFS.delete(srcDir, true);
+		} else {
+			return true;
+		}
+	}
   
   // NOTE: Access to these static variables have been replaced with a singleton config class, which gets the TEST_ROOT_DIR
   //   from the job configuration (since it is not accessible via system properties)
@@ -952,7 +1006,7 @@ public class TestDFSIOEnh extends Configured implements Tool {
 			 e.printStackTrace();
 		 } finally {
 			 fs.delete(DfsioeConfig.getInstance().getReportTmp(fsConfig), true);
-			 FileUtil.copyMerge(fs, DfsioeConfig.getInstance().getReportDir(fsConfig), fs, DfsioeConfig.getInstance().getReportTmp(fsConfig), false, fsConfig, null);
+			 copyMerge(fs, DfsioeConfig.getInstance().getReportDir(fsConfig), fs, DfsioeConfig.getInstance().getReportTmp(fsConfig), false, fsConfig, null);
 			 LOG.info("remote report file " + DfsioeConfig.getInstance().getReportTmp(fsConfig) + " merged.");
 			 BufferedReader lines = new BufferedReader(new InputStreamReader(new DataInputStream(fs.open(DfsioeConfig.getInstance().getReportTmp(fsConfig)))));
 			 String line = null;

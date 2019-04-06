@@ -311,7 +311,7 @@ function ensure_mahout_release (){
 function execute () {
     CMD="$@"
     echo -e "${BCyan}Executing: ${Cyan}${CMD}${Color_Off}"
-    $CMD
+    eval $CMD
 }
 
 function printFullLog(){
@@ -323,7 +323,7 @@ function execute_withlog () {
     if [ -t 1 ] ; then          # Terminal, beautify the output.
         ${workload_func_bin}/execute_with_log.py ${WORKLOAD_RESULT_FOLDER}/bench.log $CMD
     else                        # pipe, do nothing.
-        $CMD
+        eval $CMD
     fi
 }
 

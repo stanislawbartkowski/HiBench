@@ -60,11 +60,14 @@ class KafkaCollector(zkConnect: String, metricsTopic: String,
   }
 
   private def getPartitions(topic: String, zkConnect: String): Seq[Int] = {
-    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
+//    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
+     val zkClient = null
     try {
-      ZkUtils.getPartitionsForTopics(zkClient, Seq(topic)).flatMap(_._2).toSeq
+// TODO:
+//      ZkUtils.getPartitionsForTopics(zkClient, Seq(topic)).flatMap(_._2).toSeq
+      Nil
     } finally {
-      zkClient.close()
+//      zkClient.close()
     }
   }
 
