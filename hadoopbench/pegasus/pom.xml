@@ -21,13 +21,13 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>${hadoop.mr2.version}</version>
+      <version>${hadoop.mr.version}</version>
     </dependency>
 
 <dependency>
     <groupId>org.apache.hadoop</groupId>
     <artifactId>hadoop-client</artifactId>
-    <version>${hadoop.mr2.version}</version>
+    <version>${hadoop.mr.version}</version>
 </dependency>
 
   </dependencies>
