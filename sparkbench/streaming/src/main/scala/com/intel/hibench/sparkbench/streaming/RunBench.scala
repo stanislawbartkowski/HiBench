@@ -18,14 +18,20 @@
 package com.intel.hibench.sparkbench.streaming
 
 import com.intel.hibench.common.HiBenchConfig
-import com.intel.hibench.common.streaming.{TestCase, StreamBenchConfig, Platform, ConfigLoader}
+import com.intel.hibench.common.streaming.{ConfigLoader, Platform, StreamBenchConfig, TestCase}
 import com.intel.hibench.common.streaming.metrics.MetricsUtil
 import com.intel.hibench.sparkbench.streaming.util.SparkBenchConfig
 import com.intel.hibench.sparkbench.streaming.application._
 import kafka.serializer.StringDecoder
+import org.apache.spark.streaming.dstream.{DStream, InputDStream}
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaUtils
+//import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.kafka010.KafkaUtils
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 
 /**
@@ -95,26 +101,32 @@ object RunBench {
       ssc.sparkContext.setLogLevel("ERROR")
     }
 
-    val lines: DStream[(String, String)] = if (config.directMode) {
+    val lines: DStream[ConsumerRecord[String, String]] = { // if (config.directMode)
       // direct mode with low level Kafka API
-      KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-        ssc, config.kafkaParams, Set(config.sourceTopic))
+      //      KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+      //        KafkaUtils.createDirectStream[String, String](ssc, config.kafkaParams, Set(config.sourceTopic))
+      val i : InputDStream[ConsumerRecord[String, String]] =
+      KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent,Subscribe[String,String](Set(config.sourceTopic),config.kafkaParams))
 
-    } else {
-      // receiver mode with high level Kafka API
-      val kafkaInputs = (1 to config.receiverNumber).map{ _ =>
-        KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
-          ssc, config.kafkaParams, Map(config.sourceTopic -> config.threadsPerReceiver), config.storageLevel)
-      }
-      ssc.union(kafkaInputs)
+      //    } else {
+      //      // receiver mode with high level Kafka API
+      //    val kafkaInputs = (1 to config.receiverNumber).map{ _ =>
+      //        KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
+      //ssc, config.kafkaParams, Map(config.sourceTopic -> config.threadsPerReceiver), config.storageLevel)
+      //      }
+      //      ssc.union(kafkaInputs)
+      i
     }
 
     // convent key from String to Long, it stands for event creation time.
-    val parsedLines = lines.map{ case (k, v) => (k.toLong, v) }
+    //    val parsedLines : DStream[(Long,String)] = lines.map{ case (k, v) => (k.toLong, v) }
+    val parsedLines : DStream[(Long,String)] = lines.map{ case (c) => (c.key().toLong, c.value()) }
+
     testCase.process(parsedLines, config)
 
     ssc.start()
     ssc.awaitTermination()
   }
+
 
 }
