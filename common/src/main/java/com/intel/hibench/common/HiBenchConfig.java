@@ -33,6 +33,9 @@ public class HiBenchConfig {
   // DFS Related Conf
   // =====================================
   public static String DFS_MASTER = "hibench.hdfs.master";
+  public static String CLUSTER_KERBEROS = "hibench.kerberos";
+  public static String KERBEROS = "kerberos"; // value, kerberos protected
+
 
   // =====================================
   // YARN Related Conf

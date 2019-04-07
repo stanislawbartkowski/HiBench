@@ -37,6 +37,8 @@ case class SparkBenchConfig (
   reporterTopic: String,
   brokerList: String,
 
+  // kerberos
+  kerberos : Boolean,
 
   // Hibench
   debugMode: Boolean,
