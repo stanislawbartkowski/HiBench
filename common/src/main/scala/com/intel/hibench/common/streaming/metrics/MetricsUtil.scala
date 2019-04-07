@@ -16,10 +16,14 @@
  */
 package com.intel.hibench.common.streaming.metrics
 
+import java.util.Properties
+import scala.collection.JavaConversions._
+
 import com.intel.hibench.common.streaming.Platform
-import kafka.admin.AdminUtils
-import kafka.utils.ZKStringSerializer
-import org.I0Itec.zkclient.ZkClient
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.{LongDeserializer, StringDeserializer}
+import org.apache.kafka.clients.admin.{AdminClient, ListTopicsResult, NewTopic}
+
 
 object MetricsUtil {
 
@@ -33,8 +37,39 @@ object MetricsUtil {
     topic
   }
 
-  def createTopic(zkConnect: String, topic: String, partitions: Int): Unit = {
-//    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
+  private def setoftopics(adminClient: AdminClient): Set[String] = {
+    val l: ListTopicsResult = adminClient.listTopics()
+    l.names().get().toSet
+  }
+
+  def produceProp(bootstrap: String,kerberos : Boolean): Properties = {
+
+    val prop: Properties = new Properties()
+    prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap)
+    prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
+    prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
+    if (kerberos) {
+      prop.put("security.protocol","SASL_PLAINTEXT")
+      prop.put("sasl.kerberos.service.name","kafka")
+    }
+    prop
+  }
+
+
+  def createTopic(bootstrap: String, kerberos : Boolean, topic: String, partitions: Int): Unit = {
+    val prop = produceProp(bootstrap,kerberos)
+    val adminClient = AdminClient.create(prop)
+    println("Creating topic " + topic)
+    val replicationFactor: Short = 1
+    val newTopic = new NewTopic(topic, partitions, replicationFactor)
+    adminClient.createTopics(List(newTopic))
+    while (!(setoftopics(adminClient) contains topic)) {
+      println("Wait unless topic appears")
+      Thread.sleep(100)
+    }
+
+
+      //    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
 //    try {
 //      AdminUtils.createTopic(zkClient, topic, partitions, 1)
 //      while (!AdminUtils.topicExists(zkClient, topic)) {
@@ -46,5 +81,6 @@ object MetricsUtil {
 //    } finally {
 //      zkClient.close()
 //    }
+
   }
 }

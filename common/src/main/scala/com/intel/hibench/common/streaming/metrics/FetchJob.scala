@@ -18,22 +18,41 @@
 package com.intel.hibench.common.streaming.metrics
 
 import java.util.concurrent.Callable
+import java.util.Properties
+import java.time.Duration
+import java.time.temporal.ChronoUnit
+import scala.collection.JavaConversions._
 
 import com.codahale.metrics.Histogram
+import org.apache.kafka.clients.consumer.KafkaConsumer
 
-class FetchJob(zkConnect: String, topic: String, partition: Int,
+
+class FetchJob(bootstrap: String, kerberos : Boolean,  topic: String, partition: Int,
     histogram: Histogram) extends Callable[FetchJobResult] {
 
   override def call(): FetchJobResult = {
     val result = new FetchJobResult()
-    val consumer = new KafkaConsumer(zkConnect, topic, partition)
-    while (consumer.hasNext) {
-      val times = new String(consumer.next(), "UTF-8").split(":")
-      val startTime = times(0).toLong
-      val endTime = times(1).toLong
+//    val consumer = new KafkaBenchConsumer(bootstrap, kerberos, topic, partition)
+//    while (consumer.hasNext) {
+//      val times = new String(consumer.next(), "UTF-8").split(":")
+//      val startTime = times(0).toLong
+//      val endTime = times(1).toLong
       // correct negative value which might be caused by difference of system time
-      histogram.update(Math.max(0, endTime - startTime))
-      result.update(startTime, endTime)
+//      histogram.update(Math.max(0, endTime - startTime))
+//      result.update(startTime, endTime)
+//    }
+    val prop : Properties = MetricsUtil.produceProp(bootstrap,kerberos)
+    val kafkaConsumer = new KafkaConsumer[String,String](prop)
+    kafkaConsumer.subscribe(Seq(topic))
+    val duration : Duration = Duration.ofSeconds(1)
+    val results = kafkaConsumer.poll(duration)
+    for (record <-results){
+            val times = record.value().split(":")
+            val startTime = times(0).toLong
+            val endTime = times(1).toLong
+      // correct negative value which might be caused by difference of system time
+            histogram.update(Math.max(0, endTime - startTime))
+            result.update(startTime, endTime)
     }
     println(s"Collected ${result.count} results for partition: ${partition}")
     result

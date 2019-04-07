@@ -28,7 +28,7 @@ import org.I0Itec.zkclient.ZkClient
 import scala.collection.mutable.ArrayBuffer
 
 
-class KafkaCollector(zkConnect: String, metricsTopic: String,
+class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
     outputDir: String, sampleNumber: Int, desiredThreadNum: Int) extends LatencyCollector {
 
   private val histogram = new Histogram(new UniformReservoir(sampleNumber))
@@ -36,12 +36,12 @@ class KafkaCollector(zkConnect: String, metricsTopic: String,
   private val fetchResults = ArrayBuffer.empty[Future[FetchJobResult]]
 
   def start(): Unit = {
-    val partitions = getPartitions(metricsTopic, zkConnect)
+    val partitions = getPartitions(metricsTopic, bootstrap)
 
     println("Starting MetricsReader for kafka topic: " + metricsTopic)
 
     partitions.foreach(partition => {
-      val job = new FetchJob(zkConnect, metricsTopic, partition, histogram)
+      val job = new FetchJob(bootstrap, kerberos,metricsTopic, partition, histogram)
       val fetchFeature = threadPool.submit(job)
       fetchResults += fetchFeature
     })
@@ -61,14 +61,16 @@ class KafkaCollector(zkConnect: String, metricsTopic: String,
 
   private def getPartitions(topic: String, zkConnect: String): Seq[Int] = {
 //    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
-     val zkClient = null
-    try {
+//     val zkClient = null
+//    try {
 // TODO:
 //      ZkUtils.getPartitionsForTopics(zkClient, Seq(topic)).flatMap(_._2).toSeq
-      Nil
-    } finally {
+//      Nil
+//    } finally {
 //      zkClient.close()
-    }
+//    }
+    // TODO: remove
+    Seq(0)
   }
 
 

@@ -24,9 +24,9 @@ import org.apache.kafka.common.serialization.StringSerializer
 /**
  * This has to be created at server side
  */
-class KafkaReporter(topic: String, bootstrapServers: String) extends LatencyReporter {
+class KafkaReporter(topic: String, bootstrapServers: String,kerberos : Boolean) extends LatencyReporter {
 
-  private val producer = ProducerSingleton.getInstance(bootstrapServers)
+  private val producer = ProducerSingleton.getInstance(bootstrapServers, kerberos)
 
   override def report(startTime: Long, endTime: Long): Unit = {
     producer.send(new ProducerRecord[String, String](topic, null, s"$startTime:$endTime"))
@@ -36,12 +36,12 @@ class KafkaReporter(topic: String, bootstrapServers: String) extends LatencyRepo
 object ProducerSingleton {
   @volatile private var instance : Option[KafkaProducer[String, String]] = None
 
-  def getInstance(bootstrapServers: String): KafkaProducer[String, String] = synchronized {
+  def getInstance(bootstrapServers: String, kerberos : Boolean ): KafkaProducer[String, String] = synchronized {
     if (!instance.isDefined) {
       synchronized {
         if(!instance.isDefined) {
-          val props = new Properties()
-          props.put("bootstrap.servers", bootstrapServers)
+          val props = MetricsUtil.produceProp(bootstrapServers,kerberos)
+//          props.put("bootstrap.servers", bootstrapServers)
           instance = Some(new KafkaProducer(props, new StringSerializer, new StringSerializer))
         }
       }
