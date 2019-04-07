@@ -40,7 +40,7 @@ class FixWindow(duration: Long, slideStep: Long) extends BenchBase {
     }).foreachRDD( rdd => rdd.foreachPartition( results => {
 
       // report back to kafka
-      val reporter = new KafkaReporter(reportTopic, brokerList)
+      val reporter = new KafkaReporter(reportTopic, brokerList,config.kerberos)
       val outTime = System.currentTimeMillis()
 
       results.foreach(res => {
