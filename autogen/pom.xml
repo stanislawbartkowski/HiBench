@@ -24,7 +24,7 @@
       <groupId>org.apache.mahout</groupId>
       <artifactId>mahout-core</artifactId>
       <version>${mahout.version}</version>
-      <exclusions>
+    <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-core</artifactId>
