@@ -20,6 +20,7 @@ package com.intel.hibench.datagen.streaming.util;
 import java.util.Arrays;
 import java.util.Properties;
 
+import com.intel.hibench.common.streaming.metrics.MetricsUtil;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 
@@ -42,12 +43,13 @@ public class KafkaSender {
 
     // Details of KafkaProducerConfig could be find from:
     //   http://kafka.apache.org/documentation.html#producerconfigs
-    Properties props = new Properties();
-    props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
-    props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-        "org.apache.kafka.common.serialization.ByteArraySerializer");
-    props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-        "org.apache.kafka.common.serialization.ByteArraySerializer");
+//    Properties props = new Properties();
+//    props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
+//    props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+//        "org.apache.kafka.common.serialization.ByteArraySerializer");
+//    props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+//        "org.apache.kafka.common.serialization.ByteArraySerializer");
+    Properties props = MetricsUtil.produceProp(brokerList,false,null);
     props.setProperty(ProducerConfig.ACKS_CONFIG, "1");
     props.getProperty(ProducerConfig.CLIENT_ID_CONFIG, "DataGenerator");
     this.kafkaProducer = new KafkaProducer(props);
