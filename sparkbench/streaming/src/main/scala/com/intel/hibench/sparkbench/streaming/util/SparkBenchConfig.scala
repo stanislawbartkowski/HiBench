@@ -20,6 +20,7 @@ package com.intel.hibench.sparkbench.streaming.util
 import com.intel.hibench.common.streaming.metrics.MetricsUtil
 import org.apache.spark.storage.StorageLevel
 import scala.collection.JavaConversions._
+import java.util.Properties
 
 case class SparkBenchConfig (
   // Spark
@@ -61,9 +62,9 @@ case class SparkBenchConfig (
  //   "metadata.broker.list" -> brokerList
 //  )
   def kafkaParams :Map[String,String] =  {
-   val m = MetricsUtil.produceProp(brokerList,kerberos).toMap
-   m.put("group.id",consumerGroup)
-   m
+   val prop : Properties = MetricsUtil.produceProp(brokerList,kerberos)
+   prop.put("group.id",consumerGroup)
+   prop.toMap
  }
 
 
