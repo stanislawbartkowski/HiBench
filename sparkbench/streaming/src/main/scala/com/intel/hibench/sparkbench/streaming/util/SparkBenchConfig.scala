@@ -60,7 +60,7 @@ case class SparkBenchConfig (
  //   "metadata.broker.list" -> brokerList
 //  )
   def kafkaParams = MetricsUtil.produceProp(brokerList,kerberos)
- )
+
 
   def threadsPerReceiver = coreNumber / receiverNumber
 }
