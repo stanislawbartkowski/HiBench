@@ -19,6 +19,7 @@ package com.intel.hibench.sparkbench.streaming.util
 
 import com.intel.hibench.common.streaming.metrics.MetricsUtil
 import org.apache.spark.storage.StorageLevel
+import scala.collection.JavaConversions._
 
 case class SparkBenchConfig (
   // Spark
@@ -59,7 +60,7 @@ case class SparkBenchConfig (
  //   "zookeeper.connect" -> zkHost,
  //   "metadata.broker.list" -> brokerList
 //  )
-  def kafkaParams = MetricsUtil.produceProp(brokerList,kerberos)
+  def kafkaParams :Map[String,String] =  MetricsUtil.produceProp(brokerList,kerberos).toMap
 
 
   def threadsPerReceiver = coreNumber / receiverNumber
