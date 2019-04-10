@@ -17,11 +17,12 @@
 package com.intel.hibench.common.streaming.metrics
 
 import java.util.Properties
-import scala.collection.JavaConversions._
 
+import scala.collection.JavaConversions._
 import com.intel.hibench.common.streaming.Platform
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.{LongDeserializer, StringDeserializer}
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.{LongDeserializer, LongSerializer, StringDeserializer, StringSerializer}
 import org.apache.kafka.clients.admin.{AdminClient, ListTopicsResult, NewTopic}
 
 
@@ -48,6 +49,9 @@ object MetricsUtil {
     prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap)
     prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
     prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
+    prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer].getName)
+    prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer].getName)
+
     if (kerberos) {
       prop.put("security.protocol","SASL_PLAINTEXT")
       prop.put("sasl.kerberos.service.name","kafka")
