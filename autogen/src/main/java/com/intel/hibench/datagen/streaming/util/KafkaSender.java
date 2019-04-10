@@ -70,7 +70,7 @@ public class KafkaSender {
   public long send (String topic, long targetRecords, boolean debugMode) {
 
     long sentRecords = 0L;
-    long sentBytes = 0L;
+//    long sentBytes = 0L;
 
     while (sentRecords < targetRecords) {
       String line = cachedData.getRecord();
@@ -79,15 +79,15 @@ public class KafkaSender {
       // Key and Value will be serialized twice.
       // 1. in producer.send method
       // 2. explicitly serialize here to count byte size.
-      byte[] keyByte = serializer.serialize(topic, currentTime);
-      byte[] valueByte = fillArray(keyByte, serializer.serialize(topic, line));
+//      byte[] keyByte = serializer.serialize(topic, currentTime);
+//      byte[] valueByte = fillArray(keyByte, serializer.serialize(topic, line));
 
-      ProducerRecord serializedRecord = new ProducerRecord(topic, keyByte, valueByte);
-      kafkaProducer.send(serializedRecord, callback);
+      ProducerRecord<String,String> record = new ProducerRecord(topic, currentTime, line);
+      kafkaProducer.send(record, callback);
 
       //update counter
       sentRecords++;
-      sentBytes = sentBytes + keyByte.length + valueByte.length;
+//      sentBytes = sentBytes + keyByte.length + valueByte.length;
     }
 
     return sentRecords;

@@ -29,7 +29,7 @@ import scala.collection.mutable.ArrayBuffer
 
 
 class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
-    outputDir: String, sampleNumber: Int, desiredThreadNum: Int) extends LatencyCollector {
+    outputDir: String, sampleNumber: Int, desiredThreadNum: Int, groupid: String) extends LatencyCollector {
 
   private val histogram = new Histogram(new UniformReservoir(sampleNumber))
   private val threadPool = Executors.newFixedThreadPool(desiredThreadNum)
@@ -41,7 +41,7 @@ class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
     println("Starting MetricsReader for kafka topic: " + metricsTopic)
 
     partitions.foreach(partition => {
-      val job = new FetchJob(bootstrap, kerberos,metricsTopic, partition, histogram)
+      val job = new FetchJob(bootstrap, kerberos,metricsTopic, partition, groupid, histogram)
       val fetchFeature = threadPool.submit(job)
       fetchResults += fetchFeature
     })

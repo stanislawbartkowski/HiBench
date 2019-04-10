@@ -43,7 +43,7 @@ object MetricsUtil {
     l.names().get().toSet
   }
 
-  def produceProp(bootstrap: String,kerberos : Boolean): Properties = {
+  def produceProp(bootstrap: String,kerberos : Boolean,groupId : String = null): Properties = {
 
     val prop: Properties = new Properties()
     prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap)
@@ -51,6 +51,8 @@ object MetricsUtil {
     prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
     prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer].getName)
     prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, classOf[StringSerializer].getName)
+    if (groupId != null)
+      prop.put("group.id",groupId)
 
     if (kerberos) {
       prop.put("security.protocol","SASL_PLAINTEXT")

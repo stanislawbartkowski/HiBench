@@ -27,7 +27,7 @@ import com.codahale.metrics.Histogram
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
 
-class FetchJob(bootstrap: String, kerberos : Boolean,  topic: String, partition: Int,
+class FetchJob(bootstrap: String, kerberos : Boolean,  topic: String, partition: Int, groupId : String,
     histogram: Histogram) extends Callable[FetchJobResult] {
 
   override def call(): FetchJobResult = {
@@ -41,10 +41,10 @@ class FetchJob(bootstrap: String, kerberos : Boolean,  topic: String, partition:
 //      histogram.update(Math.max(0, endTime - startTime))
 //      result.update(startTime, endTime)
 //    }
-    val prop : Properties = MetricsUtil.produceProp(bootstrap,kerberos)
+    val prop : Properties = MetricsUtil.produceProp(bootstrap,kerberos,groupId)
     val kafkaConsumer = new KafkaConsumer[String,String](prop)
     kafkaConsumer.subscribe(Seq(topic))
-    val duration : Duration = Duration.ofSeconds(1)
+    val duration : Duration = Duration.ofSeconds(10)
     val results = kafkaConsumer.poll(duration)
     for (record <-results){
             val times = record.value().split(":")
