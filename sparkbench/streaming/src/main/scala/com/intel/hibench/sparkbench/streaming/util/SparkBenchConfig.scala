@@ -60,7 +60,11 @@ case class SparkBenchConfig (
  //   "zookeeper.connect" -> zkHost,
  //   "metadata.broker.list" -> brokerList
 //  )
-  def kafkaParams :Map[String,String] =  MetricsUtil.produceProp(brokerList,kerberos).toMap
+  def kafkaParams :Map[String,String] =  {
+   val m = MetricsUtil.produceProp(brokerList,kerberos).toMap
+   m.put("group.id",consumerGroup)
+   m
+ }
 
 
   def threadsPerReceiver = coreNumber / receiverNumber
