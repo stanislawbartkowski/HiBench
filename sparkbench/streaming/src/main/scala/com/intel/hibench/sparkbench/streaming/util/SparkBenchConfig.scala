@@ -17,6 +17,7 @@
 
 package com.intel.hibench.sparkbench.streaming.util
 
+import com.intel.hibench.common.streaming.metrics.MetricsUtil
 import org.apache.spark.storage.StorageLevel
 
 case class SparkBenchConfig (
@@ -53,11 +54,13 @@ case class SparkBenchConfig (
     case _ => StorageLevel.MEMORY_AND_DISK_SER_2
   }
 
-  def kafkaParams = Map (
-    "group.id" -> consumerGroup,
-    "zookeeper.connect" -> zkHost,
-    "metadata.broker.list" -> brokerList
-  )
+//  def kafkaParams = Map (
+ //   "group.id" -> consumerGroup,
+ //   "zookeeper.connect" -> zkHost,
+ //   "metadata.broker.list" -> brokerList
+//  )
+  def kafkaParams = MetricsUtil.produceProp(brokerList,kerberos)
+ )
 
   def threadsPerReceiver = coreNumber / receiverNumber
 }
