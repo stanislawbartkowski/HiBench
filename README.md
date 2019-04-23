@@ -41,6 +41,9 @@ As a minimum, modify the following parameters
 | -- | -- |
 | hibench.masters.hostnames | hurds1.fyre.ibm.com,a1.fyre.ibm.com,aa1.fyre.ibm.com
 | hibench.slaves.hostnames | hurds2.fyre.ibm.com,hurds3.fyre.ibm.com,hurds4.fyre.ibm.com,hurds5.fyre.ibm.com,hurds5.fyre.ibm.com
+| hibench.streambench.kafka.home | /usr/hdp/current/kafka-broker |
+| hibench.streambench.zkHost | a1.fyre.ibm.com:2181,aa1.fyre.ibm.com:2181,hurds1.fyre.ibm.com:2181
+| hibench.streambench.kafka.brokerList | a1.fyre.ibm.com:6667
 ### hadoop.conf
 > cd conf<br>
 > cp hadoop.conf.template hadoop.conf<br>
