@@ -56,8 +56,8 @@ hibench.mahout.release.cdh5	    mahout-0.9-cdh5.1.0
 hibench.mahout.release		      ${hibench.mahout.release.${hibench.hadoop.release}}
 hibench.mahout.home		          ${hibench.home}/hadoopbench/mahout/target/${hibench.mahout.release}
 
-hibench.masters.hostnames  mdp1.sb.com,mdp2.sb.com
-hibench.slaves.hostnames mdp3.sb.com,mdp4.sb.com
+hibench.masters.hostnames  <<<INCLUDE HOST NAMES
+hibench.slaves.hostnames   <<<INCLUDE HOST NAMES
 
 hibench.workload.input
 hibench.workload.output
@@ -89,9 +89,9 @@ hibench.streambench.fixWindowSlideStep           10000
 #======================================================
 hibench.streambench.kafka.home                  /usr/hdp/current/kafka-broker
 # zookeeper host:port of kafka cluster, host1:port1,host2:port2...
-hibench.streambench.zkHost mdp1.sb.com:2181,mdp2.sb.com:2181,mdp3.sb.com:2181
+hibench.streambench.zkHost <<INCLUDE ZOOKEEPER 
 # Kafka broker lists, written in mode host:port,host:port,..
-hibench.streambench.kafka.brokerList mdp1.sb.com:6667
+hibench.streambench.kafka.brokerList <<<INCLUDE KAFKA BROKER
 hibench.streambench.kafka.consumerGroup          HiBench
 # number of partitions of generated topic (default 20)
 hibench.streambench.kafka.topicPartitions       20
