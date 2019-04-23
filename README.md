@@ -35,7 +35,7 @@ For user running the benchmark:
 * create */user/{user}* directory
 * if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
 ## Configure
-### hibench.conf
+### conf/hibench.conf
 > cd conf<br>
 > cp hibench.conf.template hibench.conf<br>
 
@@ -48,7 +48,7 @@ As a minimum, modify the following parameters
 | hibench.streambench.kafka.home | /usr/hdp/current/kafka-broker |
 | hibench.streambench.zkHost | a1.fyre.ibm.com:2181,aa1.fyre.ibm.com:2181,hurds1.fyre.ibm.com:2181
 | hibench.streambench.kafka.brokerList | a1.fyre.ibm.com:6667
-### hadoop.conf
+### conf/hadoop.conf
 > cd conf<br>
 > cp hadoop.conf.template hadoop.conf<br>
 
@@ -57,6 +57,17 @@ As a minimum, modify the following parameters
 | hibench.hadoop.home | /usr/hdp/current/hadoop-client
 | hibench.hdfs.master |  hdfs://a1.fyre.ibm.com:8020/tmp/hibench
 | hibench.hadoop.release | hdp
+### conf/spark.conf
+https://github.com/intel-hadoop/HiBench/blob/master/docs/run-sparkbench.md
+
+>cd conf
+> cp spark.conf.template spark.conf
+<br>
+
+| Parameter | Example value |
+| -- | -- |
+| hibench.spark.home | /usr/hdp/current/spark2-client
+| hibench.spark.master | yarn
 
 ### Test
 Test Hadoop<br>
