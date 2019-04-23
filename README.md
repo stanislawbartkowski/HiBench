@@ -30,6 +30,27 @@ The default is HDP 3.1<br>
 > git clone https://github.com/intel-hadoop/HiBench.git<br>
 > cd HiBench<br>
 > mvn clean package<br>
+## Configure
+### hibench.conf
+> cd conf<br>
+> cp hibench.conf.template hibench.conf
+As a minimum, modify the following parameters
+
+| Parameter | Example value |
+| -- | -- |
+| hibench.masters.hostnames | hurds1.fyre.ibm.com,a1.fyre.ibm.com,aa1.fyre.ibm.com
+| hibench.slaves.hostnames | hurds2.fyre.ibm.com,hurds3.fyre.ibm.com,hurds4.fyre.ibm.com,hurds5.fyre.ibm.com,hurds5.fyre.ibm.com
+### hadoop.conf
+> cd conf<br>
+> cp hadoop.conf.template hadoop.conf<br>
+
+| Parameter | Example value |
+| --- | --- |
+| hibench.hadoop.home | /usr/hdp/current/hadoop-client
+| hibench.hdfs.master |  hdfs://a1.fyre.ibm.com:8020/tmp/hibench
+| hibench.hadoop.release | hdp
+
+====================
 ====================
 ## The bigdata micro benchmark suite ##
 
