@@ -60,8 +60,8 @@ As a minimum, modify the following parameters
 ### conf/spark.conf
 https://github.com/intel-hadoop/HiBench/blob/master/docs/run-sparkbench.md
 
->cd conf
-> cp spark.conf.template spark.conf
+>cd conf<br>
+>cp spark.conf.template spark.conf
 <br>
 
 | Parameter | Example value |
