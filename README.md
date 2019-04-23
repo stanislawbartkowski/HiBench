@@ -51,6 +51,14 @@ As a minimum, modify the following parameters
 | hibench.hdfs.master |  hdfs://a1.fyre.ibm.com:8020/tmp/hibench
 | hibench.hadoop.release | hdp
 
+### Test
+Test Hadoop<br>
+> bin/workloads/micro/wordcount/prepare/prepare.sh<br>
+> bin/workloads/micro/wordcount/spark/run.sh<br>
+
+Test Spark<br>
+> bin/workloads/ml/als/prepare/prepare.sh<br>
+> bin/workloads/ml/als/spark/run.sh<br>
 ====================
 ====================
 ## The bigdata micro benchmark suite ##
