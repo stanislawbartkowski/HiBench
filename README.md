@@ -23,6 +23,13 @@ Default locale: pl_PL, platform encoding: UTF-8
 OS name: "linux", version: "3.10.0-957.1.3.el7.x86_64", arch: "amd64", family: "unix"
 ```
 
+## Download HiBench and build it
+https://github.com/intel-hadoop/HiBench/blob/master/docs/build-hibench.md
+<br>
+The default is HDP 3.1<br>
+> git clone https://github.com/intel-hadoop/HiBench.git<br>
+> cd HiBench<br>
+> mvn clean package<br>
 ====================
 ## The bigdata micro benchmark suite ##
 
