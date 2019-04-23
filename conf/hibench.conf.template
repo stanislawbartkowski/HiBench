@@ -30,6 +30,10 @@ hibench.configure.dir		${hibench.home}/conf
 # default hibench HDFS root
 hibench.hdfs.data.dir		${hibench.hdfs.master}/HiBench
 
+#security
+# kerberos,nonsecure
+hibench.security        nonsecure
+
 # path of hibench jars
 #hibench.hibench.datatool.dir	          ${hibench.home}/autogen/target/autogen-7.1-SNAPSHOT-jar-with-dependencies.jar
 hibench.hibench.datatool.dir	          ${hibench.home}/autogen/target/autogen-7.1-SNAPSHOT.jar
@@ -95,6 +99,8 @@ hibench.streambench.kafka.topicPartitions       20
 hibench.streambench.kafka.consumerGroup HiBench
 # Set the starting offset of kafkaConsumer (default: largest)
 hibench.streambench.kafka.offsetReset largest
+# Nunber of minutes metrics reader is reading
+hibench.streambench.min 1
 
 
 #======================================================
