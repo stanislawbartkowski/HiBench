@@ -16,19 +16,23 @@
  */
 package com.intel.hibench.common.streaming.metrics
 
+import com.intel.hibench.common.HiBenchConfig
+
 object MetricsReader extends App {
 
-  if (args.length < 6) {
-    System.err.println("args: <bootstrap> <topic> <outputDir> <sampleNumber> <threadNumber> <groupId> need to be specified!")
+  if (args.length < 7) {
+    System.err.println("args: <bootstrap> <topic> <outputDir> <kerberos> <sampleNumber> <groupId> <number of minutes> need to be specified!")
     System.exit(1)
   }
 
   val bootstrap = args(0)
   val topic = args(1)
   val outputDir = args(2)
-  val sampleNum = args(3).toInt
-  val threadNum = args(4).toInt
+  val kerberos : Boolean = HiBenchConfig.KERBEROS == args(3)
+  val sampleNum = args(4).toInt
   val groupId = args(5)
-  val latencyCollector = new KafkaCollector(bootstrap, false, topic, outputDir, sampleNum, threadNum,groupId)
+  val minutes = args(6).toInt
+  if (kerberos) println("Kerberos detected in command line parameters")
+  val latencyCollector = new KafkaCollector(bootstrap, kerberos, topic, outputDir, sampleNum, groupId,minutes)
   latencyCollector.start()
 }

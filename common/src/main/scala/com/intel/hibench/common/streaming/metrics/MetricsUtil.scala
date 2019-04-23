@@ -74,19 +74,5 @@ object MetricsUtil {
       Thread.sleep(100)
     }
 
-
-      //    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
-//    try {
-//      AdminUtils.createTopic(zkClient, topic, partitions, 1)
-//      while (!AdminUtils.topicExists(zkClient, topic)) {
-//        Thread.sleep(100)
-//      }
-//    } catch {
-//      case e: Exception =>
-//        throw e
-//    } finally {
-//      zkClient.close()
-//    }
-
   }
 }

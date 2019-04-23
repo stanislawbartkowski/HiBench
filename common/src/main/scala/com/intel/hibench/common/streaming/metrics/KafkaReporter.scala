@@ -41,7 +41,6 @@ object ProducerSingleton {
       synchronized {
         if(!instance.isDefined) {
           val props = MetricsUtil.produceProp(bootstrapServers,kerberos)
-//          props.put("bootstrap.servers", bootstrapServers)
           instance = Some(new KafkaProducer(props, new StringSerializer, new StringSerializer))
         }
       }

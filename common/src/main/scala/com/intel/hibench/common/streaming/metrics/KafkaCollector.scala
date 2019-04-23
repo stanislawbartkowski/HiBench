@@ -17,31 +17,33 @@
 
 package com.intel.hibench.common.streaming.metrics
 
-import java.io.{FileWriter, File}
-import java.util.Date
-import java.util.concurrent.{TimeUnit, Future, Executors}
+import java.io.{File, FileWriter}
+import java.util.{Date, Properties}
+import java.util.concurrent.{Executors, Future, TimeUnit}
 
-import com.codahale.metrics.{UniformReservoir, Histogram}
-import kafka.utils.{ZKStringSerializer, ZkUtils}
-import org.I0Itec.zkclient.ZkClient
+import org.apache.kafka.clients.consumer.KafkaConsumer
+import com.codahale.metrics.{Histogram, UniformReservoir}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.JavaConversions._
 
 
 class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
-    outputDir: String, sampleNumber: Int, desiredThreadNum: Int, groupid: String) extends LatencyCollector {
+                     outputDir: String, sampleNumber: Int, groupid: String, minutes: Int) extends LatencyCollector {
 
   private val histogram = new Histogram(new UniformReservoir(sampleNumber))
-  private val threadPool = Executors.newFixedThreadPool(desiredThreadNum)
-  private val fetchResults = ArrayBuffer.empty[Future[FetchJobResult]]
 
   def start(): Unit = {
-    val partitions = getPartitions(metricsTopic, bootstrap)
+    val fetchResults = ArrayBuffer.empty[Future[FetchJobResult]]
+    val prop: Properties = MetricsUtil.produceProp(bootstrap, kerberos, groupid)
+
+    val partitions = getPartitions(prop, metricsTopic)
+    val threadPool = Executors.newFixedThreadPool(partitions.size)
 
     println("Starting MetricsReader for kafka topic: " + metricsTopic)
 
     partitions.foreach(partition => {
-      val job = new FetchJob(bootstrap, kerberos,metricsTopic, partition, groupid, histogram)
+      val job = new FetchJob(prop, metricsTopic, partition, minutes, histogram)
       val fetchFeature = threadPool.submit(job)
       fetchResults += fetchFeature
     })
@@ -59,18 +61,11 @@ class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
     report(finalResults.minTime, finalResults.maxTime, finalResults.count)
   }
 
-  private def getPartitions(topic: String, zkConnect: String): Seq[Int] = {
-//    val zkClient = new ZkClient(zkConnect, 6000, 6000, ZKStringSerializer)
-//     val zkClient = null
-//    try {
-// TODO:
-//      ZkUtils.getPartitionsForTopics(zkClient, Seq(topic)).flatMap(_._2).toSeq
-//      Nil
-//    } finally {
-//      zkClient.close()
-//    }
-    // TODO: remove
-    Seq(0)
+  private def getPartitions(prop: Properties, topic: String): Seq[Int] = {
+    val consumer = new KafkaConsumer[String, String](prop)
+    try
+      consumer.partitionsFor(topic).toSeq.map(_.partition())
+    finally if (consumer != null) consumer.close()
   }
 
 
@@ -78,8 +73,8 @@ class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
     val outputFile = new File(outputDir, metricsTopic + ".csv")
     println(s"written out metrics to ${outputFile.getCanonicalPath}")
     val header = "time,count,throughput(msgs/s),max_latency(ms),mean_latency(ms),min_latency(ms)," +
-        "stddev_latency(ms),p50_latency(ms),p75_latency(ms),p95_latency(ms),p98_latency(ms)," +
-        "p99_latency(ms),p999_latency(ms)\n"
+      "stddev_latency(ms),p50_latency(ms),p75_latency(ms),p95_latency(ms),p98_latency(ms)," +
+      "p99_latency(ms),p999_latency(ms)\n"
     val fileExists = outputFile.exists()
     if (!fileExists) {
       val parent = outputFile.getParentFile
@@ -97,21 +92,25 @@ class KafkaCollector(bootstrap: String, kerberos: Boolean, metricsTopic: String,
     val snapshot = histogram.getSnapshot
     val throughput = count * 1000 / (maxTime - minTime)
     outputFileWriter.append(s"$time,$count,$throughput," +
-        s"${formatDouble(snapshot.getMax)}," +
-        s"${formatDouble(snapshot.getMean)}," +
-        s"${formatDouble(snapshot.getMin)}," +
-        s"${formatDouble(snapshot.getStdDev)}," +
-        s"${formatDouble(snapshot.getMedian)}," +
-        s"${formatDouble(snapshot.get75thPercentile())}," +
-        s"${formatDouble(snapshot.get95thPercentile())}," +
-        s"${formatDouble(snapshot.get98thPercentile())}," +
-        s"${formatDouble(snapshot.get99thPercentile())}," +
-        s"${formatDouble(snapshot.get999thPercentile())}\n")
+      s"${formatDouble(snapshot.getMax)}," +
+      s"${formatDouble(snapshot.getMean)}," +
+      s"${formatDouble(snapshot.getMin)}," +
+      s"${formatDouble(snapshot.getStdDev)}," +
+      s"${formatDouble(snapshot.getMedian)}," +
+      s"${formatDouble(snapshot.get75thPercentile())}," +
+      s"${formatDouble(snapshot.get95thPercentile())}," +
+      s"${formatDouble(snapshot.get98thPercentile())}," +
+      s"${formatDouble(snapshot.get99thPercentile())}," +
+      s"${formatDouble(snapshot.get999thPercentile())}\n")
     outputFileWriter.close()
   }
 
   private def formatDouble(d: Double): String = {
-    "%.3f".format(d)
+    import java.text.DecimalFormat
+    import java.text.DecimalFormatSymbols
+    val decimalSymbols = DecimalFormatSymbols.getInstance
+    decimalSymbols.setDecimalSeparator('.')
+    new DecimalFormat("0.00", decimalSymbols).format(d)
   }
 
 }

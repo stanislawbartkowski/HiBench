@@ -69,7 +69,8 @@ object RunBench {
     val reporterTopic = MetricsUtil.getTopic(Platform.SPARK, topic, producerNum, recordPerInterval, intervalSpan)
     println("Reporter Topic: " + reporterTopic)
     val reporterTopicPartitions = conf.getProperty(StreamBenchConfig.KAFKA_TOPIC_PARTITIONS).toInt
-    val kerberos : Boolean = if (conf.getProperty(HiBenchConfig.CLUSTER_KERBEROS) == null) false else HiBenchConfig.KERBEROS.equals(conf.getProperty(HiBenchConfig.CLUSTER_KERBEROS))
+    val kerberos : Boolean =  HiBenchConfig.KERBEROS == conf.getProperty(HiBenchConfig.CLUSTER_KERBEROS)
+    if (kerberos) println("Kerberos security in config file detected")
     MetricsUtil.createTopic(brokerList, kerberos,reporterTopic, reporterTopicPartitions)
 
     val probability = conf.getProperty(StreamBenchConfig.SAMPLE_PROBABILITY).toDouble
@@ -97,24 +98,12 @@ object RunBench {
     val ssc = new StreamingContext(conf, Milliseconds(config.batchInterval))
     ssc.checkpoint(config.checkpointPath)
 
-    if(!config.debugMode) {
-      ssc.sparkContext.setLogLevel("ERROR")
-    }
+    if(!config.debugMode) ssc.sparkContext.setLogLevel("ERROR")
 
     val lines: DStream[ConsumerRecord[String, String]] = { // if (config.directMode)
       // direct mode with low level Kafka API
-      //      KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-      //        KafkaUtils.createDirectStream[String, String](ssc, config.kafkaParams, Set(config.sourceTopic))
       val i : InputDStream[ConsumerRecord[String, String]] =
       KafkaUtils.createDirectStream[String, String](ssc, PreferConsistent,Subscribe[String,String](Set(config.sourceTopic),config.kafkaParams))
-
-      //    } else {
-      //      // receiver mode with high level Kafka API
-      //    val kafkaInputs = (1 to config.receiverNumber).map{ _ =>
-      //        KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](
-      //ssc, config.kafkaParams, Map(config.sourceTopic -> config.threadsPerReceiver), config.storageLevel)
-      //      }
-      //      ssc.union(kafkaInputs)
       i
     }
 

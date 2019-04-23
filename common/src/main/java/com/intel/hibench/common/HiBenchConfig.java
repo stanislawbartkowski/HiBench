@@ -36,7 +36,6 @@ public class HiBenchConfig {
   public static String CLUSTER_KERBEROS = "hibench.kerberos";
   public static String KERBEROS = "kerberos"; // value, kerberos protected
 
-
   // =====================================
   // YARN Related Conf
   // =====================================

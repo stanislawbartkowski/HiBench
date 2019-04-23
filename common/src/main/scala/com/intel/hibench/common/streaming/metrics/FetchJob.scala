@@ -20,39 +20,52 @@ package com.intel.hibench.common.streaming.metrics
 import java.util.concurrent.Callable
 import java.util.Properties
 import java.time.Duration
-import java.time.temporal.ChronoUnit
-import scala.collection.JavaConversions._
+import java.util
 
+import scala.collection.JavaConversions._
+import org.apache.kafka.common.TopicPartition
 import com.codahale.metrics.Histogram
 import org.apache.kafka.clients.consumer.KafkaConsumer
 
 
-class FetchJob(bootstrap: String, kerberos : Boolean,  topic: String, partition: Int, groupId : String,
-    histogram: Histogram) extends Callable[FetchJobResult] {
+class FetchJob(prop: Properties, topic: String, partition: Int, min : Int, histogram: Histogram) extends Callable[FetchJobResult] {
+
+  private var lastDur : Duration = Duration.ZERO
+
+  private def timeNotElapsed(start: Long): Boolean = {
+    val duration: Duration = Duration.ofMillis(util.Calendar.getInstance().getTimeInMillis - start)
+    if (((duration.toMillis - lastDur.toMillis) / 1000) > 30) {
+      println("Partiton: " + partition + " " + duration.toMillis/1000 + " sec elapsed ...")
+      lastDur = duration
+    }
+    val mins = duration.toMinutes
+    duration.toMinutes < min
+  }
 
   override def call(): FetchJobResult = {
     val result = new FetchJobResult()
-//    val consumer = new KafkaBenchConsumer(bootstrap, kerberos, topic, partition)
-//    while (consumer.hasNext) {
-//      val times = new String(consumer.next(), "UTF-8").split(":")
-//      val startTime = times(0).toLong
-//      val endTime = times(1).toLong
-      // correct negative value which might be caused by difference of system time
-//      histogram.update(Math.max(0, endTime - startTime))
-//      result.update(startTime, endTime)
-//    }
-    val prop : Properties = MetricsUtil.produceProp(bootstrap,kerberos,groupId)
-    val kafkaConsumer = new KafkaConsumer[String,String](prop)
-    kafkaConsumer.subscribe(Seq(topic))
-    val duration : Duration = Duration.ofSeconds(10)
-    val results = kafkaConsumer.poll(duration)
-    for (record <-results){
-            val times = record.value().split(":")
-            val startTime = times(0).toLong
-            val endTime = times(1).toLong
-      // correct negative value which might be caused by difference of system time
-            histogram.update(Math.max(0, endTime - startTime))
-            result.update(startTime, endTime)
+    println("Topic " + topic + " partition:" + partition + " Reading data for " + min + " minutes")
+    val kafkaConsumer = new KafkaConsumer[String, String](prop)
+    val pinfo: TopicPartition = new TopicPartition(topic, partition)
+    // java list of topics
+    val listP: java.util.List[TopicPartition] = util.Arrays.asList(pinfo)
+    kafkaConsumer.assign(listP)
+    //    kafkaConsumer.subscribe(Seq(topic))
+    // go to the end of sream, read only current messages, ignore historical
+    kafkaConsumer.seekToEnd(listP)
+    val duration: Duration = Duration.ofSeconds(10)
+    val start: Long = util.Calendar.getInstance().getTimeInMillis
+    while (timeNotElapsed(start)) {
+      val results = kafkaConsumer.poll(duration)
+      for (record <- results) {
+        val times = record.value().split(":")
+        val startTime = times(0).toLong
+        val endTime = times(1).toLong
+//        println(startTime + " "  + endTime + " " + Math.max(0, endTime - startTime))
+        // correct negative value which might be caused by difference of system time
+        histogram.update(Math.max(0, endTime - startTime))
+        result.update(startTime, endTime)
+      }
     }
     println(s"Collected ${result.count} results for partition: ${partition}")
     result
@@ -63,14 +76,14 @@ class FetchJobResult(var minTime: Long, var maxTime: Long, var count: Long) {
 
   def this() = this(Long.MaxValue, Long.MinValue, 0)
 
-  def update(startTime: Long ,endTime: Long): Unit = {
+  def update(startTime: Long, endTime: Long): Unit = {
     count += 1
 
-    if(startTime < minTime) {
+    if (startTime < minTime) {
       minTime = startTime
     }
 
-    if(endTime > maxTime) {
+    if (endTime > maxTime) {
       maxTime = endTime
     }
   }
