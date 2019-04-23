@@ -28,8 +28,12 @@ printFullLog
 ${STREAMING_KAFKA_HOME}/bin/kafka-topics.sh --zookeeper ${STREAMING_ZKADDR} --list
 
 read -p "Please input the topic:" TOPIC
+read -p "Please input the number of minutes metrics are collected (default: ${METRICS_READER_MIN}) :" MINUTES 
+[ -z "$MINUTES" ] && MINUTES=$METRICS_READER_MIN
 
-CMD="${JAVA_BIN} -cp ${COMMON_JAR} com.intel.hibench.common.streaming.metrics.MetricsReader ${STREAMING_ZKADDR} ${TOPIC} ${METRICS_READER_OUTPUT_DIR} ${METRICE_READER_SAMPLE_NUM} ${METRICS_READER_THREAD_NUM}"
+CMD="${JAVA_BIN} -cp ${COMMON_JAR} com.intel.hibench.common.streaming.metrics.MetricsReader ${STREAMING_KAFKABROKER} ${TOPIC} ${METRICS_READER_OUTPUT_DIR} ${HIBENCH_SECURITY} ${METRICE_READER_SAMPLE_NUM} ${STREAMING_CONSUMER_GROUP} ${MINUTES}"
+
+echo $CMD
 
 execute_withlog $CMD
 

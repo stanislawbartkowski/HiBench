@@ -28,6 +28,7 @@ HiBenchEnvPropMappingMandatory=dict(
     HADOOP_CONF_DIR="hibench.hadoop.configure.dir",
     HIBENCH_HOME="hibench.home",
     HIBENCH_CONF="hibench.configure.dir",
+    HIBENCH_SECURITY="hibench.security",
 
     REPORT_COLUMN_FORMATS="hibench.report.formats",
     SPARKBENCH_JAR="hibench.sparkbench.jar",
@@ -184,6 +185,7 @@ HiBenchEnvPropMapping=dict(
     STREAMING_TOPIC_NAME="hibench.streambench.kafka.topic",
     STREAMING_KAFKA_HOME="hibench.streambench.kafka.home",
     STREAMING_ZKADDR="hibench.streambench.zkHost",
+    STREAMING_KAFKABROKER="hibench.streambench.kafka.brokerList",
     STREAMING_CONSUMER_GROUP="hibench.streambench.kafka.consumerGroup",
     STREAMING_DATA_DIR="hibench.streambench.datagen.dir",
     STREAMING_DATA1_NAME="hibench.streambench.datagen.data1.name",
@@ -198,6 +200,7 @@ HiBenchEnvPropMapping=dict(
     METRICE_READER_SAMPLE_NUM="hibench.streambench.metricsReader.sampleNum",
     METRICS_READER_THREAD_NUM="hibench.streambench.metricsReader.threadNum",
     METRICS_READER_OUTPUT_DIR="hibench.streambench.metricsReader.outputDir",
+    METRICS_READER_MIN="hibench.streambench.min",
 
     # sparkstreaming
     STREAMBENCH_SPARK_JAR="hibench.streambench.sparkbench.jar",
