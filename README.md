@@ -30,6 +30,10 @@ The default is HDP 3.1<br>
 > git clone https://github.com/intel-hadoop/HiBench.git<br>
 > cd HiBench<br>
 > mvn clean package<br>
+## Hadoop user
+For user running the benchmark:
+* create */user/{user}* directory
+* if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
 ## Configure
 ### hibench.conf
 > cd conf<br>
