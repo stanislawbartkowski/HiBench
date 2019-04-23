@@ -33,7 +33,8 @@ The default is HDP 3.1<br>
 ## Configure
 ### hibench.conf
 > cd conf<br>
-> cp hibench.conf.template hibench.conf
+> cp hibench.conf.template hibench.conf<br>
+
 As a minimum, modify the following parameters
 
 | Parameter | Example value |
