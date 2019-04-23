@@ -1,15 +1,28 @@
 # HiBench Suite [![Build Status](https://travis-ci.org/intel-hadoop/HiBench.svg?branch=master)](https://travis-ci.org/intel-hadoop/HiBench)
 
-------------
-## Goals
+# Goals
 
 That is my fork of HiBench (https://github.com/Intel-bigdata/HiBench) suite. In my environment, HDP 3.1/2.6.4 enabled for Kerberos, I found adjusting the existing benchmark frustrating. It is described it here (https://github.com/stanislawbartkowski/MyHiBench). So I decided to develop my own copy to make running the benchmark smoothly. The main obstacles I hope to resolve:
 * HDP 3.1
 * Kafka 10.0
 * Kerberos secured cluster
--------------
 
+# Installation
+## Prerequisities
+* Download *maven* if not installed yet. (https://maven.apache.org/download.cgi).<br>
+* Unpack in *opt* directory and make in */usr/local/bin* a link to *mvn* executable. 
+  * mvn -> /opt/apache-maven-3.6.0/bin/mvn
+* Verify
+>mvn
+```
+Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
+Maven home: /opt/apache-maven-3.6.0
+Java version: 1.8.0_201, vendor: Oracle Corporation, runtime: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-2.el7_6.x86_64/jre
+Default locale: pl_PL, platform encoding: UTF-8
+OS name: "linux", version: "3.10.0-957.1.3.el7.x86_64", arch: "amd64", family: "unix"
+```
 
+====================
 ## The bigdata micro benchmark suite ##
 
 
