@@ -242,7 +242,14 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         statsSum.append("EoR");
         output.collect(new Text("s:"+name+":"+serialNo+":tput_samples"), new Text(statsSum.substring(lastLen,statsSum.length())));
         //add start and end time stamp
-        output.collect(new Text("g:"+name+":io_start_end"), new Text(String.valueOf(stats.statHdfs.get(0))+";"+String.valueOf(stats.statHdfs.get(size-2))));
+        Long start =  stats.statHdfs.get(0);
+        Long end = stats.statHdfs.get(size-2);
+
+        for (Long l : stats.statHdfs) {
+            LOG.info("l=" + l);
+        }
+
+        output.collect(new Text("g:"+name+":io_start_end"), new Text(String.valueOf(start)+";"+String.valueOf(end)));
         output.collect(new Text("f:logging_time"), new Text(String.valueOf(stats.loggingTime)));
     }
   }
@@ -397,24 +404,24 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
     runIOTest(ReadMapperEnh.class, DfsioeConfig.getInstance().getReadDir(fsConfig),job);
   }
 
-  protected static void sequentialTest(
-                                     FileSystem fs, 
-                                     int testType, 
-                                     int fileSize, 
-                                     int nrFiles
-                                     ) throws Exception {
-    IOStatMapperEnh ioer = null;
-    if (testType == TEST_TYPE_READ)
-        ioer = new ReadMapperEnh();
-    else if (testType == TEST_TYPE_WRITE)
-        ioer = new WriteMapperEnh();
-    else
-        return;
-    for(int i=0; i < nrFiles; i++)
-        ioer.doIO(Reporter.NULL,
-                BASE_FILE_NAME+Integer.toString(i), 
-                MEGA*fileSize);
-  }
+  //protected static void sequentialTest(
+  //                                   FileSystem fs,
+  //                                   int testType,
+  //                                   int fileSize,
+  //                                   int nrFiles
+  //                                   ) throws Exception {
+  //  IOStatMapperEnh ioer = null;
+  //  if (testType == TEST_TYPE_READ)
+  //      ioer = new ReadMapperEnh();
+  //  else if (testType == TEST_TYPE_WRITE)
+  //      ioer = new WriteMapperEnh();
+  //  else
+  //      return;
+  //  for(int i=0; i < nrFiles; i++)
+  //      ioer.doIO(Reporter.NULL,
+  //              BASE_FILE_NAME+Integer.toString(i),
+  //              MEGA*fileSize);
+  //}
 
   protected static void runIOTest( @SuppressWarnings("rawtypes") Class<? extends Mapper> mapperClass,
                                  Path outputDir,
@@ -544,7 +551,7 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
     int nrFiles = 1;
     String resFileName = DEFAULT_RES_FILE_NAME;
     String tputFileName = DEFAULT_TPUT_RESFILE_NAME;
-    boolean isSequential = false;
+//    boolean isSequential = false;
     boolean tputReportEach = false;
     boolean tputReportTotal = false;
     int tputSampleInterval = DEFAULT_TPUT_SAMPLING_INTERVAL;
@@ -571,8 +578,8 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
             testType = TEST_TYPE_CLEANUP;
         } else if (args[i].equals("-skipAnalyze")){
 	    skipAnalyze = true;
-        } else if (args[i].startsWith("-seq")) {
-            isSequential = true;
+//        } else if (args[i].startsWith("-seq")) {
+//            isSequential = true;
         } else if (args[i].equals("-nrFiles")) {
             nrFiles = Integer.parseInt(args[++i]);
         } else if (args[i].equals("-fileSize")) {
@@ -647,14 +654,14 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         LOG.info("threshold(fraction)" + threshold);
         LOG.info("threshold(int=maxSLots*threshold)=" + (int)(mapSlots*threshold));
 
-        if (isSequential) {
-            long tStart = System.currentTimeMillis();
-            sequentialTest(fs, testType, fileSize, nrFiles);
-            long execTime = System.currentTimeMillis() - tStart;
-            String resultLine = "Seq Test exec time sec: " + (float)execTime / 1000;
-            LOG.info(resultLine);
-            return 0;
-        }
+//        if (isSequential) {
+//            long tStart = System.currentTimeMillis();
+//            sequentialTest(fs, testType, fileSize, nrFiles);
+//            long execTime = System.currentTimeMillis() - tStart;
+//            String resultLine = "Seq Test exec time sec: " + (float)execTime / 1000;
+//            LOG.info(resultLine);
+//            return 0;
+//        }
         if (testType == TEST_TYPE_CLEANUP) {
             cleanup(fs);
             return 0;
@@ -866,7 +873,7 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
             count++;
             counted[i] = '1';
         } else 
-          LOG.info(i+": concurrency = " + concurrency[i] + " is less or equal then threshold " + threshold + ". Will be ignored.");
+          LOG.error(i+": concurrency = " + concurrency[i] + " is less or equal then threshold " + threshold + ". Will be ignored.");
     }  
     concurrStr.deleteCharAt((concurrStr.length()-1));
 
@@ -944,12 +951,12 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 					 String[] t = tokens.nextToken().split(";");
 					 int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval) + 1;
 					 int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval) - 1;
-                                         if (start > end) {
-                                              LOG.error("start is greater then end !");
-                                              LOG.info("io_start_end = " + t[0] + "," + t[1]);
-                                              LOG.info("tStart = " + tStart);
-                                              LOG.info("start = " + start + " end = " + end);
-                                         }
+                     if (start > end) {
+                            LOG.error("start is greater then end !");
+                            LOG.info("io_start_end = " + t[0] + "," + t[1]);
+                            LOG.info("tStart = " + tStart);
+                            LOG.info("start = " + start + " end = " + end);
+                     }
 					 if(start < 0)
 						 start = 0;
 					 for (int i=start; i<=end; i++){
