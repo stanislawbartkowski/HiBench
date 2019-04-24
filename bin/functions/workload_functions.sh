@@ -174,6 +174,15 @@ function check_dir() {                # ensure dir is created
     fi
 }
 
+function check_hdfsdir() {
+  # check whether directory exists
+  hdfs dfs -ls $1 >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}ERROR${Color_Off}: HDFS directory $1 does not exist."
+    exit 1
+  fi
+}
+
 function dir_size() {                
     for item in $(dus_hdfs $1); do
         if [[ $item =~ ^[0-9]+$ ]]; then

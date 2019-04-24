@@ -44,6 +44,7 @@ END_TIME=`timestamp`
 stop_monitor $MONITOR_PID
 
 sleep 5
+check_hdfsdir $OUTPUT_HDFS
 SIZE=`dir_size $OUTPUT_HDFS`
 
 gen_report ${START_TIME} ${END_TIME} ${SIZE:-}

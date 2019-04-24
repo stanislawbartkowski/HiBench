@@ -20,7 +20,7 @@ Mapping from properties to environment variable names
 HiBenchEnvPropMappingMandatory=dict(
     JAVA_BIN="java.bin",
     HADOOP_HOME="hibench.hadoop.home",
-    KAFKA_HOME="hibench.kafka.home",
+#    KAFKA_HOME="hibench.kafka.home",
     HDFS_MASTER="hibench.hdfs.master",
     HADOOP_RELEASE="hibench.hadoop.release",
     HADOOP_EXAMPLES_JAR="hibench.hadoop.examples.jar",

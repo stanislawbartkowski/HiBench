@@ -637,9 +637,15 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         int maxreduces = jc.getDefaultReduces();
         int reducesPerNode = fsConfig.getInt("mapred.tasktracker.reduce.tasks.maximum",2);
         int nodenum = maxreduces/reducesPerNode;
+        LOG.info("maxreduces=" + maxreduces + " reducesPerNode(default 2)="+reducesPerNode);
+        LOG.info("nodenum (maxreduces/reducesPerNode)=" + nodenum);    
         int mapPerNum = fsConfig.getInt("mapred.tasktracker.map.tasks.maximum",2);
+        LOG.info("mapPerNum(default 2)=" + mapPerNum);
         int mapSlots = mapPerNum * nodenum; 
         LOG.info("maximum concurrent maps = "+String.valueOf(mapSlots));
+
+        LOG.info("threshold(fraction)" + threshold);
+        LOG.info("threshold(int=maxSLots*threshold)=" + (int)(mapSlots*threshold));
 
         if (isSequential) {
             long tStart = System.currentTimeMillis();
@@ -859,7 +865,8 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
             sumSquare += bytesChanged[i]*bytesChanged[i];
             count++;
             counted[i] = '1';
-        }
+        } else 
+          LOG.info(i+": concurrency = " + concurrency[i] + " is less or equal then threshold " + threshold + ". Will be ignored.");
     }  
     concurrStr.deleteCharAt((concurrStr.length()-1));
 
@@ -901,6 +908,8 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 			 reduceFile = new Path(DfsioeConfig.getInstance().getReadDir(fsConfig), "part-00000");		
 		
 		 int maxslot = (int)(execTime/plotInterval)+1;
+                 LOG.info("maxslot=" + maxslot);
+                 LOG.info("execTime=" + execTime + " plotInterval=" + plotInterval);
 		 int[] concurrency = new int[maxslot+1];
 		 double[]  bytesTotal = new double[maxslot+1];
 		 for (int i=0; i<maxslot+1; i++) {
@@ -935,6 +944,12 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 					 String[] t = tokens.nextToken().split(";");
 					 int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval) + 1;
 					 int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval) - 1;
+                                         if (start > end) {
+                                              LOG.error("start is greater then end !");
+                                              LOG.info("io_start_end = " + t[0] + "," + t[1]);
+                                              LOG.info("tStart = " + tStart);
+                                              LOG.info("start = " + start + " end = " + end);
+                                         }
 					 if(start < 0)
 						 start = 0;
 					 for (int i=start; i<=end; i++){
