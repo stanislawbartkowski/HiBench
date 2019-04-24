@@ -17,3 +17,5 @@ report/
 conf/hadoop.conf
 conf/spark.conf
 conf/hibench.conf
+nohup.out
+l*
