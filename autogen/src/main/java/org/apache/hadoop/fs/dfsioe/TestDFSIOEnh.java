@@ -245,14 +245,14 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         Long start =  stats.statHdfs.get(0);
         Long end = stats.statHdfs.get(size-2);
 
-        output.collect(new Text("Write times"), new Text("Start"));
+        output.collect(new Text(name + " Write times start"), new Text("Start"));
         for (Long l : stats.statHdfs) {
-            output.collect(new Text("l="), new Text(l.toString()));
+            output.collect(new Text(name+" l="), new Text(l.toString()));
         }
-        output.collect(new Text("Write times"), new Text("End"));
+        output.collect(new Text(name + " Write times end"), new Text("End"));
 
         output.collect(new Text("g:"+name+":io_start_end"), new Text(String.valueOf(start)+";"+String.valueOf(end)));
-        output.collect(new Text("f:logging_time"), new Text(String.valueOf(stats.loggingTime)));
+        output.collect(new Text("ff:logging_time"), new Text(String.valueOf(stats.loggingTime)));
     }
   }
 
