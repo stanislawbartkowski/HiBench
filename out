@@ -1,6 +1,0 @@
-patching args=
-start HadoopPrepareDFSIOE bench
-Deleted hdfs://a1.fyre.ibm.com:8020/tmp/hibench/HiBench/Dfsioe/Input
-Submit MapReduce Job: /usr/hdp/current/hadoop-client/bin/hadoop --config /usr/hdp/current/hadoop-client/etc/hadoop jar /home/bench/HiBench/autogen/target/autogen-7.1-SNAPSHOT.jar org.apache.hadoop.fs.dfsioe.TestDFSIOEnh -Dmapreduce.map.java.opts="-Dtest.build.data=hdfs://a1.fyre.ibm.com:8020/tmp/hibench/HiBench/Dfsioe/Input -Xmx3276m" -Dmapreduce.reduce.java.opts="-Dtest.build.data=hdfs://a1.fyre.ibm.com:8020/tmp/hibench/HiBench/Dfsioe/Input -Xmx6553m" -Dtest.build.data=hdfs://a1.fyre.ibm.com:8020/tmp/hibench/HiBench/Dfsioe/Input -write -skipAnalyze -nrFiles 16 -fileSize 1 -bufferSize 4096
-TestFDSIO.0.0.4 Enhanced Version
-finish HadoopPrepareDFSIOE bench
