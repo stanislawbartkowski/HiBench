@@ -245,9 +245,11 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         Long start =  stats.statHdfs.get(0);
         Long end = stats.statHdfs.get(size-2);
 
+        output.collect(new Text("Write times"), new Text("Start"));
         for (Long l : stats.statHdfs) {
-            LOG.info("l=" + l);
+            output.collect(new Text("l="), new Text(l.toString()));
         }
+        output.collect(new Text("Write times"), new Text("End"));
 
         output.collect(new Text("g:"+name+":io_start_end"), new Text(String.valueOf(start)+";"+String.valueOf(end)));
         output.collect(new Text("f:logging_time"), new Text(String.valueOf(stats.loggingTime)));
@@ -1076,137 +1078,6 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 			 }
 		 }
 		 res.println("\n-- Result Analyse -- : " + ((System.currentTimeMillis() - t1)/1000) + "s");
-		 res.close();
-	 }
-	 
-	 @Deprecated
-	 protected static void analyzeResult( FileSystem fs, 
-                                     int testType,
-                                     long execTime,
-                                     String resFileName,
-                                     int nrFiles,
-                                     long fileSize,
-                                     long tStart,
-                                     int plotInterval,
-                                     long sampleUnit,
-                                     int threshold,
-                                     String tputResFileName,
-                                     boolean tputReportEach,
-                                     boolean tputReportTotal 
-                                    ) throws IOException {
-    
-
-		 //the original report
-		 //TestDFSIO.analyzeResult(fs,testType,execTime,resFileName);
-	
-	
-		 long tasks = 0;
-		 long size = 0;
-		 long time = 0;
-		 float rate = 0;
-		 float sqrate = 0;
-	
-		 Path reduceFile;
-		 if (testType == TEST_TYPE_WRITE)
-			 reduceFile = new Path(DfsioeConfig.getInstance().getWriteDir(fsConfig), "part-00000");
-		 else
-			 reduceFile = new Path(DfsioeConfig.getInstance().getReadDir(fsConfig), "part-00000");
-	    
-	
-		 //long time = 0;
-		 float loggingTime = 0;
-		 String line;
-		 ArrayList<String> wrSamples = new ArrayList<String> (); 
-	
-		 int maxslot = (int)(execTime/plotInterval)+1;
-		 int[] concurrency = new int[maxslot+1];
-		 for (int i=0; i<maxslot+1; i++)
-			 concurrency[i] = 0;
-	
-		 DataInputStream in = null;
-		 BufferedReader lines = null;
-		 try {
-			 in = new DataInputStream(fs.open(reduceFile));
-			 lines = new BufferedReader(new InputStreamReader(in));  
-			 while((line = lines.readLine()) != null) {
-				 StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%");
-				 String attr = tokens.nextToken(); 
-				 if (attr.endsWith(":time")) {
-					 time = Long.parseLong(tokens.nextToken());
-				 } else if (attr.endsWith(":logging_time")) {
-					 loggingTime = Float.parseFloat(tokens.nextToken());
-				 } else if (attr.endsWith(":tput_samples")){
-					 String[] tags=attr.split(":");
-					 wrSamples.add(tags[1]);
-					 wrSamples.add(tokens.nextToken());
-				 } else if (attr.endsWith(":io_start_end")){
-					 String[] t=tokens.nextToken().split(";");
-					 int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval) + 1;
-					 int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval) - 1;
-					 if(start < 0)
-						 start = 0;
-					 for (int i=start; i<=end; i++){
-						 if(i > concurrency.length-1)
-							 break;
-						 concurrency[i]++;
-					 }
-				 } else if (attr.endsWith(":tasks")){
-					 tasks = Long.parseLong(tokens.nextToken());
-				 } else if (attr.endsWith(":size")){
-					 size = Long.parseLong(tokens.nextToken());
-				 } else if (attr.endsWith(":rate")) {
-					 rate = Float.parseFloat(tokens.nextToken());
-				 } else if (attr.endsWith(":sqrate")) {
-					 sqrate = Float.parseFloat(tokens.nextToken());
-				 }
-			 }
-		 } finally {
-			 if(in != null) in.close();
-			 if(lines != null) lines.close();  
-		 }
-	
-		 double med = rate / 1000 / tasks;
-		 double stdDev = Math.sqrt(Math.abs(sqrate / 1000 / tasks - med*med));
-		 String resultLines[] = {
-				 "----- TestDFSIO ----- : " + ((testType == TEST_TYPE_WRITE) ? "write" : (testType == TEST_TYPE_READ) ? "read" : "unknown"),
-				 "           Date & time: " + new Date(System.currentTimeMillis()),
-				 "       Number of files: " + tasks,
-				 "Total MBytes processed: " + size/MEGA,
-				 "     Throughput mb/sec: " + size * 1000.0 / (time * MEGA),
-				 "Average IO rate mb/sec: " + med,
-				 " IO rate std deviation: " + stdDev,
-				 "    Test exec time sec: " + (float)execTime / 1000, "" };
-	
-		 String[] tputResultLines = analyzeTputSamples(wrSamples, nrFiles, fileSize,  
-	                                                    tStart, execTime, concurrency,
-	                                                      plotInterval, sampleUnit, threshold,
-	                                                    tputResFileName, tputReportTotal, tputReportEach);
-	    
-		 String enhResultLines[] = {
-	        "-- Extended Metrics --   : " + ((testType == TEST_TYPE_WRITE) ? "write" :
-	                                        (testType == TEST_TYPE_READ) ? "read" : 
-	                                    "unknown"),
-	        "Result file name         : " + tputResFileName,
-	        "Sampling overhead        : " + (loggingTime/time)*100 + "%",
-	        "Reference Start Time     : " + String.valueOf(tStart)
-		 };
-	
-		 PrintStream res = new PrintStream(new FileOutputStream(new File(resFileName), true)); 
-	   
-		 for(int i = 0; i < resultLines.length; i++) {
-			 LOG.info(resultLines[i]);
-			 res.println(resultLines[i]);
-		 } 
-	
-		 for(int i = 0; i < enhResultLines.length; i++) {
-			 LOG.info(enhResultLines[i]);
-			 res.println(enhResultLines[i]);
-		 }
-	    
-		 for (int j = 0; j < tputResultLines.length; j++) {
-			 LOG.info(tputResultLines[j]);
-			 res.println(tputResultLines[j]);
-		 }
 		 res.close();
 	 }
 
