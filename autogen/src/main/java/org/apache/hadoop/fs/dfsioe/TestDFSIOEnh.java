@@ -869,13 +869,13 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
     StringBuffer concurrStr = new StringBuffer();
     for (int i = 0; i<bytesChanged.length; i++){
         concurrStr.append(String.valueOf(concurrency[i])+",");
-        if(concurrency[i] >= threshold){
+//        if(concurrency[i] >= threshold){
             sum += bytesChanged[i];
             sumSquare += bytesChanged[i]*bytesChanged[i];
             count++;
             counted[i] = '1';
-        } else 
-          LOG.error(i+": concurrency = " + concurrency[i] + " is less or equal then threshold " + threshold + ". Will be ignored.");
+//        } else
+//          LOG.error(i+": concurrency = " + concurrency[i] + " is less or equal then threshold " + threshold + ". Will be ignored.");
     }  
     concurrStr.deleteCharAt((concurrStr.length()-1));
 
