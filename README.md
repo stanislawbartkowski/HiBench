@@ -35,6 +35,13 @@ For user running the benchmark:
 * create */user/{user}* directory
 * if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
 * give the user read/write access to Hive *default* database
+## Configure *Hive*
+Ambari console->Hive->Advanced->Custom hive-site.xml<br>
+Add property (pay attention to | as field delimiter)
+
+| Property | Values |
+| -- | -- |
+| hive.security.authorization.sqlstd.confwhitelist.append | hive.input.format\|hive.stats.autogather\|mapreduce.job.reduces\|mapreduce.job.maps 
 ## Configure
 ### conf/hibench.conf
 > cd conf<br>
