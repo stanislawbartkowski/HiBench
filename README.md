@@ -34,6 +34,7 @@ The default is HDP 3.1<br>
 For user running the benchmark:
 * create */user/{user}* directory
 * if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
+* give the user read/write access to Hive *default* database
 ## Configure
 ### conf/hibench.conf
 > cd conf<br>
