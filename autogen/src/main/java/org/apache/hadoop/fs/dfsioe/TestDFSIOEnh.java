@@ -247,7 +247,6 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 
         output.collect(new Text("s:"+name + " Write times start"), new Text("Start"));
         for (Long l : stats.statHdfs) {
-//            output.collect(new Text("s:"+name+" l="), new Text(l.toString()));
             output.collect(new Text("s:"+name+" l=" + l.toString()), new Text("x"));
         }
         output.collect(new Text("s:"+name + " Write times end"), new Text("End"));
@@ -347,7 +346,7 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
         super(); 
     }
 
-    public Object doIO(Reporter reporter, 
+    public Object doIO(Reporter reporter,
                        String name, 
                        long totalSize 
                        ) throws IOException {
@@ -952,8 +951,10 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 					 sqrate = Float.parseFloat(tokens.nextToken());
 				 } else if (lable.endsWith(":io_start_end")) {
 					 String[] t = tokens.nextToken().split(";");
-					 int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval) + 1;
-					 int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval) - 1;
+//					 int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval) + 1;
+//			 int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval) - 1;
+                     int start = (int)((Long.parseLong(t[0])-tStart)/plotInterval);
+                     int end = (int)((Long.parseLong(t[1])-tStart)/plotInterval);
                      if (start > end) {
                             LOG.error("start is greater then end !");
                             LOG.info("io_start_end = " + t[0] + "," + t[1]);
@@ -1015,8 +1016,10 @@ private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
 			 conf2.setLong("ana_execTime", execTime);
 			 conf2.setLong("ana_fileSize", fileSize);
 			 
-			 Job job = new Job(conf2, "Result Analyzer");
-			 job.setJarByClass(Analyzer.class);
+//			 Job job = new Job(conf2, "Result Analyzer");
+             Job job = Job.getInstance(conf2);
+             job.setJobName("Result Analyzer");
+             job.setJarByClass(Analyzer.class);
 			 job.setMapperClass(_Mapper.class);
 			 job.setReducerClass(_Reducer.class);
 			 job.setOutputKeyClass(Text.class);
