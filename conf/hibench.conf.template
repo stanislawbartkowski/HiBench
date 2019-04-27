@@ -100,7 +100,7 @@ hibench.streambench.kafka.consumerGroup HiBench
 # Set the starting offset of kafkaConsumer (default: largest)
 hibench.streambench.kafka.offsetReset largest
 # Nunber of minutes metrics reader is reading
-hibench.streambench.min 1
+hibench.streambench.min 5
 
 
 #======================================================

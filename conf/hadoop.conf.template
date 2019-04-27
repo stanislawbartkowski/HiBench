@@ -12,4 +12,4 @@ hibench.hdfs.master       hdfs://localhost:8020
 
 
 # Hadoop release provider. Supported value: apache, cdh5, hdp
-hibench.hadoop.release    apache
+hibench.hadoop.release    hdp
