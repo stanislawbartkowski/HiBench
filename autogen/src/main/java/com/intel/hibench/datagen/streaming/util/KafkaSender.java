@@ -38,7 +38,7 @@ public class KafkaSender {
   StringSerializer serializer = new StringSerializer();
 
   // Constructor
-  public KafkaSender(String brokerList, String seedFile,
+  public KafkaSender(String brokerList, boolean kerberos, String seedFile,
       long fileOffset, String dfsMaster, int recordLength, int intervalSpan) {
 
     // Details of KafkaProducerConfig could be find from:
@@ -49,7 +49,7 @@ public class KafkaSender {
 //        "org.apache.kafka.common.serialization.ByteArraySerializer");
 //    props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
 //        "org.apache.kafka.common.serialization.ByteArraySerializer");
-    Properties props = MetricsUtil.produceProp(brokerList,false,null);
+    Properties props = MetricsUtil.produceProp(brokerList,kerberos,null);
     props.setProperty(ProducerConfig.ACKS_CONFIG, "1");
     props.getProperty(ProducerConfig.CLIENT_ID_CONFIG, "DataGenerator");
     this.kafkaProducer = new KafkaProducer(props);

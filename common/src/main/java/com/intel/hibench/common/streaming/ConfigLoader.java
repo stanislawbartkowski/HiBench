@@ -17,6 +17,8 @@
 
 package com.intel.hibench.common.streaming;
 
+import com.intel.hibench.common.HiBenchConfig;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -67,5 +69,10 @@ public class ConfigLoader {
             System.out.println("ERROR: Unknown config key:" + key);
             return null;
         }
+    }
+
+    public boolean isKerberos() {
+        if (getProperty(HiBenchConfig.SECURITY) == null) return false;
+        return HiBenchConfig.KERBEROS.equals(getProperty(HiBenchConfig.SECURITY));
     }
 }

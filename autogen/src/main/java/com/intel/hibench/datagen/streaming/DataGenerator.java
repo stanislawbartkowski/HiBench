@@ -55,10 +55,11 @@ public class DataGenerator {
     int recordLength = Integer.parseInt(configLoader.getProperty(StreamBenchConfig.DATAGEN_RECORD_LENGTH));
     String dfsMaster = configLoader.getProperty(HiBenchConfig.DFS_MASTER);
     boolean debugMode = Boolean.getBoolean(configLoader.getProperty(StreamBenchConfig.DEBUG_MODE));
+    if (configLoader.isKerberos()) System.out.println("Kerberos security detected in config file");
 
     DataGeneratorConfig dataGeneratorConf = new DataGeneratorConfig(testCase, brokerList, kMeansFile, kMeansFileOffset,
         userVisitsFile, userVisitsFileOffset, dfsMaster, recordLength, intervalSpan, topic, recordsPerInterval,
-        totalRounds, totalRecords, debugMode);
+        totalRounds, totalRecords, debugMode,configLoader.isKerberos());
 
     // Create thread pool and submit producer task
     int producerNumber = Integer.parseInt(configLoader.getProperty(StreamBenchConfig.DATAGEN_PRODUCER_NUMBER));
@@ -109,10 +110,10 @@ public class DataGenerator {
       // instantiate KafkaSender
       KafkaSender sender;
       if(conf.getTestCase().contains("statistics")) {
-        sender = new KafkaSender(conf.getBrokerList(), conf.getkMeansFile(), conf.getkMeansFileOffset(),
+        sender = new KafkaSender(conf.getBrokerList(), conf.isKerberos(),conf.getkMeansFile(), conf.getkMeansFileOffset(),
             conf.getDfsMaster(), conf.getRecordLength(), conf.getIntervalSpan());
       } else {
-        sender = new KafkaSender(conf.getBrokerList(), conf.getUserVisitsFile(), conf.getUserVisitsFileOffset(),
+        sender = new KafkaSender(conf.getBrokerList(), conf.isKerberos(),conf.getUserVisitsFile(), conf.getUserVisitsFileOffset(),
             conf.getDfsMaster(), conf.getRecordLength(), conf.getIntervalSpan());
       }
 

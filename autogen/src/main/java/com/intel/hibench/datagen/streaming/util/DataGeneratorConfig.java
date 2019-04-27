@@ -19,24 +19,25 @@ package com.intel.hibench.datagen.streaming.util;
 
 // A POJO class to contain necessary configuration
 public class DataGeneratorConfig {
-  String testCase;
-  String brokerList;
-  String kMeansFile;
-  long kMeansFileOffset;
-  String userVisitsFile;
-  long userVisitsFileOffset;
-  String dfsMaster;
-  int recordLength;
-  int intervalSpan;
-  String topic;
-  long recordsPerInterval;
-  int totalRounds;
-  long totalRecords;
-  boolean debugMode;
+  final String testCase;
+  final String brokerList;
+  final String kMeansFile;
+  final long kMeansFileOffset;
+  final String userVisitsFile;
+  final long userVisitsFileOffset;
+  final String dfsMaster;
+  final int recordLength;
+  final int intervalSpan;
+  final String topic;
+  final long recordsPerInterval;
+  final int totalRounds;
+  final long totalRecords;
+  final boolean debugMode;
+  final boolean kerberos;
 
   public DataGeneratorConfig(String testCase, String brokerList, String kMeansFile, long kMeansFileOffset,
       String userVisitsFile, long userVisitsFileOffset, String dfsMaster, int recordLength, int intervalSpan,
-      String topic, long recordsPerInterval, int totalRounds, long totalRecords, boolean debugMode) {
+      String topic, long recordsPerInterval, int totalRounds, long totalRecords, boolean debugMode, boolean kerberos) {
     this.testCase = testCase;
     this.brokerList = brokerList;
     this.kMeansFile = kMeansFile;
@@ -51,6 +52,7 @@ public class DataGeneratorConfig {
     this.totalRounds = totalRounds;
     this.totalRecords = totalRecords;
     this.debugMode = debugMode;
+    this.kerberos = kerberos;
   }
 
   public String getTestCase() {
@@ -104,4 +106,6 @@ public class DataGeneratorConfig {
   }
 
   public boolean getDebugMode() { return debugMode; }
+
+  public boolean isKerberos() { return kerberos; }
 }
