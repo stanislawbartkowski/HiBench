@@ -55,6 +55,7 @@ object MetricsUtil {
       prop.put("group.id",groupId)
 
     if (kerberos) {
+      println("Setting up Kerberos in property file")
       prop.put("security.protocol","SASL_PLAINTEXT")
       prop.put("sasl.kerberos.service.name","kafka")
     }
