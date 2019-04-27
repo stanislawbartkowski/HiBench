@@ -34,7 +34,6 @@ public class HiBenchConfig {
   // =====================================
   public static String SECURITY = "hibench.security";
   public static String DFS_MASTER = "hibench.hdfs.master";
-  public static String CLUSTER_KERBEROS = "hibench.kerberos";
   public static String KERBEROS = "kerberos"; // value, kerberos protected
 
   // =====================================

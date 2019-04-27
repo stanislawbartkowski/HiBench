@@ -55,11 +55,12 @@ public class DataGenerator {
     int recordLength = Integer.parseInt(configLoader.getProperty(StreamBenchConfig.DATAGEN_RECORD_LENGTH));
     String dfsMaster = configLoader.getProperty(HiBenchConfig.DFS_MASTER);
     boolean debugMode = Boolean.getBoolean(configLoader.getProperty(StreamBenchConfig.DEBUG_MODE));
-    if (configLoader.isKerberos()) System.out.println("Kerberos security detected in config file");
+    boolean kerberos = configLoader.isKerberos();
+    if (kerberos) System.out.println("Kerberos security detected in config file");
 
     DataGeneratorConfig dataGeneratorConf = new DataGeneratorConfig(testCase, brokerList, kMeansFile, kMeansFileOffset,
         userVisitsFile, userVisitsFileOffset, dfsMaster, recordLength, intervalSpan, topic, recordsPerInterval,
-        totalRounds, totalRecords, debugMode,configLoader.isKerberos());
+        totalRounds, totalRecords, debugMode,kerberos);
 
     // Create thread pool and submit producer task
     int producerNumber = Integer.parseInt(configLoader.getProperty(StreamBenchConfig.DATAGEN_PRODUCER_NUMBER));

@@ -72,6 +72,9 @@ public class ConfigLoader {
     }
 
     public boolean isKerberos() {
+        System.out.println("Check kerberos ............");
+        String s = getProperty(HiBenchConfig.SECURITY);
+        System.out.println(HiBenchConfig.SECURITY + " = " + s + " !!!!!!!!!!!!");
         if (getProperty(HiBenchConfig.SECURITY) == null) return false;
         return HiBenchConfig.KERBEROS.equals(getProperty(HiBenchConfig.SECURITY));
     }

@@ -69,7 +69,7 @@ object RunBench {
     val reporterTopic = MetricsUtil.getTopic(Platform.SPARK, topic, producerNum, recordPerInterval, intervalSpan)
     println("Reporter Topic: " + reporterTopic)
     val reporterTopicPartitions = conf.getProperty(StreamBenchConfig.KAFKA_TOPIC_PARTITIONS).toInt
-    val kerberos : Boolean =  HiBenchConfig.KERBEROS == conf.getProperty(HiBenchConfig.CLUSTER_KERBEROS)
+    val kerberos : Boolean =  HiBenchConfig.KERBEROS == conf.getProperty(HiBenchConfig.SECURITY)
     if (kerberos) println("Kerberos security in config file detected")
     MetricsUtil.createTopic(brokerList, kerberos,reporterTopic, reporterTopicPartitions)
 
