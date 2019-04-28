@@ -227,3 +227,18 @@ identity
 Please input the topic:
 ```
 Enter the latest topic and get the result as csv file.
+
+# Kerberos
+## Configuration
+Modify *security* parameter to *kerberos*. 
+> vi conf/hibench.com
+```
+#security
+# kerberos,nonsecure
+hibench.security        kerberos
+```
+## Users
+Make sure that user running the benchmark is authorized:
+* *yarn* : submit jobs in *root.default* queue
+* *hive* : read/write access in *default* database
+* *kafka* : create and write topics
