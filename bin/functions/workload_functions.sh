@@ -208,6 +208,7 @@ function run_spark_job() {
     export_withlog SPARKBENCH_PROPERTIES_FILES
 
     YARN_OPTS=""
+    KERBEROS_OPTS=${KERBEROS_OPTS:-}
     if [[ "$SPARK_MASTER" == yarn-* ]]; then
         export_withlog HADOOP_CONF_DIR
         
