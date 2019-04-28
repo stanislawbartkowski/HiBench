@@ -20,3 +20,4 @@ conf/hibench.conf
 nohup.out
 l*
 out
+jaas/*
