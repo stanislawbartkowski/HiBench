@@ -242,3 +242,8 @@ Make sure that user running the benchmark is authorized:
 * *yarn* : submit jobs in *root.default* queue
 * *hive* : read/write access in *default* database
 * *kafka* : create and write topics
+## Prepare *jaas* file to run distribute Spark/Kafka streaming job
+Next step is to prepare Kerberos *keytab* file and JAAS policy file. It is described here: https://github.com/stanislawbartkowski/SampleSparkStreaming/blob/master/README.md#kerberos-keytab
+Assume:
+* jaas/bench.keytab : keytab file
+* jaas/bench_jaas.conf : JAAS policy file
