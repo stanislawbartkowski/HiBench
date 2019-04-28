@@ -5,7 +5,7 @@
 That is my fork of HiBench (https://github.com/Intel-bigdata/HiBench) suite. In my environment, HDP 3.1/2.6.4 enabled for Kerberos, I found adjusting the existing benchmark frustrating. It is described here: (https://github.com/stanislawbartkowski/MyHiBench). <br>
 So I decided to develop my own copy to make running the benchmark smoothly. The main obstacles I hope to resolve:
 * HDP 3.1
-* Kafka 10.0
+* Kafka 2.0
 * Kerberos secured cluster
 
 # Installation
