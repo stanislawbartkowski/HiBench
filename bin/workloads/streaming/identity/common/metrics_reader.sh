@@ -31,6 +31,7 @@ read -p "Please input the topic:" TOPIC
 read -p "Please input the number of minutes metrics are collected (default: ${METRICS_READER_MIN}) :" MINUTES 
 [ -z "$MINUTES" ] && MINUTES=$METRICS_READER_MIN
 
+JVM_OPTS=
 [ "$HIBENCH_SECURITY" = "kerberos" ] && JVM_OPTS="-Djava.security.auth.login.config=/etc/kafka/conf/kafka_client_jaas.conf"
 
 CMD="${JAVA_BIN} $JVM_OPTS -cp ${COMMON_JAR} com.intel.hibench.common.streaming.metrics.MetricsReader ${STREAMING_KAFKABROKER} ${TOPIC} ${METRICS_READER_OUTPUT_DIR} ${HIBENCH_SECURITY} ${METRICE_READER_SAMPLE_NUM} ${STREAMING_CONSUMER_GROUP} ${MINUTES}"
