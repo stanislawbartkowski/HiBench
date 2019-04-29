@@ -33,6 +33,10 @@ hibench.hdfs.data.dir		${hibench.hdfs.master}/HiBench
 #security
 # kerberos,nonsecure
 hibench.security        nonsecure
+# only if kerberos is set, used for spark streaming, distribute computing
+hibench.benchkeytab jaas/bench_jaas.conf
+hibench.benchjaas jaas/bench.keytab
+
 
 # path of hibench jars
 #hibench.hibench.datatool.dir	          ${hibench.home}/autogen/target/autogen-7.1-SNAPSHOT-jar-with-dependencies.jar

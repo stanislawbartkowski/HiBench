@@ -28,8 +28,10 @@ printFullLog
 
 if [ "$HIBENCH_SECURITY" = "kerberos" ]; then
   echo "Kerberos security detected in config files"
-  JAASFILE=jaas/bench_jaas.conf
-  KEYTAB=jaas/bench.keytab
+#  JAASFILE=jaas/bench_jaas.conf
+  JAASFILE=$HIBENCH_JAASFILE
+#  KEYTAB=jaas/bench.keytab
+  KEYTAB=$HIBENCH_KEYTAB
   CONF="--conf spark.driver.extraJavaOptions=-Djava.security.auth.login.config=$JAASFILE"
   CONF="$CONF --conf spark.executor.extraJavaOptions=-Djava.security.auth.login.config=$JAASFILE"
   CONF="$CONF --files $JAASFILE#$JAASFILE,$KEYTAB#$KEYTAB"

@@ -29,6 +29,8 @@ HiBenchEnvPropMappingMandatory=dict(
     HIBENCH_HOME="hibench.home",
     HIBENCH_CONF="hibench.configure.dir",
     HIBENCH_SECURITY="hibench.security",
+    HIBENCH_JAASFILE="hibench.benchkeytab",
+    HIBENCH_KEYTAB="hibench.benchjaas",    
 
     REPORT_COLUMN_FORMATS="hibench.report.formats",
     SPARKBENCH_JAR="hibench.sparkbench.jar",
