@@ -236,6 +236,9 @@ Modify *security* parameter to *kerberos*.
 #security
 # kerberos,nonsecure
 hibench.security        kerberos
+# only if kerberos is set, used for spark streaming, distribute computing
+hibench.benchkeytab jaas/bench_jaas.conf
+hibench.benchjaas jaas/bench.keytab
 ```
 ## Users
 Make sure that user running the benchmark is authorized:
