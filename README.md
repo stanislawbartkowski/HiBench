@@ -85,6 +85,9 @@ Test Hadoop<br>
 Test Spark<br>
 > bin/workloads/ml/als/prepare/prepare.sh<br>
 > bin/workloads/ml/als/spark/run.sh<br>
+### Run HiBench test
+> bin/run_all.sh<br>
+
 ## Kafka streaming
 ### Configurtion
 https://github.com/intel-hadoop/HiBench/blob/master/docs/run-streamingbench.md
