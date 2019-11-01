@@ -109,6 +109,13 @@ In *conf/spark.conf* replace *hibench.streambench.spark.checkpointPath* paramete
 | -- | -- |
 | hibench.streambench.spark.checkpointPath | /tmp |
 
+<br>
+If the test is executed on the node without Kafka Broker installed, it is necessary to download and install manually the Kafka client software and modify the *hibench.streambench.kafka.home* accordingly. For instance, assuming Kafka installed under */opt/kafka_2.12-2.3.1/* directory:<br>
+
+| Parameter | Value |
+| -- | -- |
+| hibench.streambench.kafka.home | /opt/kafka_2.12-2.3.1/ |
+
 ### Prepare data
 > bin/workloads/streaming/identity/prepare/genSeedDataset.sh<br>
 ### Start producing stream of data
