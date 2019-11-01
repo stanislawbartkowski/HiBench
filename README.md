@@ -88,6 +88,32 @@ Test Spark<br>
 ### Run HiBench test
 > bin/run_all.sh<br>
 
+### Troubleshooting
+```
+java.lang.NoClassDefFoundError: junit/framework/TestCase
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:467)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:73)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:368)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:362)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:361)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at org.apache.hadoop.test.MapredTestDriver.<init>(MapredTestDriver.java:109)
+	at org.apache.hadoop.test.MapredTestDriver.<init>(MapredTestDriver.java:61)
+```
+Check the script file and verify that junit jar path filename is correct. 
+>  vi /data/testdata/HiBench/bin/workloads/micro/sleep/hadoop/run.sh
+```
+export HADOOP_CLASSPATH=hadoopbench/nutchindexing/target/dependency/junit-3.8.1.jar
+run_hadoop_job $HADOOP_SLEEP_JAR sleep -m $NUM_MAPS -r $NUM_REDS -mt $MAP_SLEEP_TIME -mr $RED_SLEEP_TIME
+
+```
+
 ## Kafka streaming
 ### Configurtion
 https://github.com/intel-hadoop/HiBench/blob/master/docs/run-streamingbench.md
