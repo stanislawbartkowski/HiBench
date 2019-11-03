@@ -35,7 +35,8 @@ HIVEBENCH_SQL_FILE=${WORKLOAD_RESULT_FOLDER}/rankings_uservisits_scan.hive
 prepare_sql_scan ${HIVEBENCH_SQL_FILE}
 
 # run bench
-CMD="$HIVE_HOME/bin/hive -f ${HIVEBENCH_SQL_FILE}"
+#CMD="$HIVE_HOME/bin/hive -f ${HIVEBENCH_SQL_FILE}"
+CMD="hive -f ${HIVEBENCH_SQL_FILE}"
 MONITOR_PID=`start_monitor`
 START_TIME=`timestamp`
 execute_withlog $CMD

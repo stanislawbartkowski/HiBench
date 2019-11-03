@@ -24,6 +24,7 @@ enter_bench HadoopSleep ${workload_config} ${current_dir}
 show_bannar start
 
 START_TIME=`timestamp`
+export HADOOP_CLASSPATH=hadoopbench/nutchindexing/target/dependency/junit-3.8.1.jar
 run_hadoop_job $HADOOP_SLEEP_JAR sleep -m $NUM_MAPS -r $NUM_REDS -mt $MAP_SLEEP_TIME -mr $RED_SLEEP_TIME
 END_TIME=`timestamp`
 SIZE="0"

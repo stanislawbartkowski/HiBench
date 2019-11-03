@@ -38,7 +38,10 @@ prepare_sql_join ${HIVEBENCH_SQL_FILE}
 # run bench
 MONITOR_PID=`start_monitor`
 START_TIME=`timestamp`
-CMD="$HIVE_HOME/bin/hive -f ${HIVEBENCH_SQL_FILE}"
+CMD="hive -f ${HIVEBENCH_SQL_FILE}"
+echo "==============="
+echo "$CMD"
+echo "==============="
 execute_withlog $CMD
 END_TIME=`timestamp`
 stop_monitor $MONITOR_PID

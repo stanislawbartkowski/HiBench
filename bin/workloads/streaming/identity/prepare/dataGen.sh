@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -30,7 +30,11 @@ JVM_OPTS="-Xmx1024M -server -XX:+UseCompressedOops -XX:+UseParNewGC -XX:+UseConc
 
 echo $HIBENCH_SECURITY
 
-[ "$HIBENCH_SECURITY" = "kerberos" ] && JVM_OPTS="-Djava.security.auth.login.config=/etc/kafka/conf/kafka_client_jaas.conf $JVM_OPTS"
+#KAFKA_CLIENT_JAAS=jaas/kafka_client_jaas.conf
+
+#KAFKA_CLIENT_JAAS=/etc/kafka/conf/kafka_client_jaas.conf
+
+[ "$HIBENCH_SECURITY" = "kerberos" ] && JVM_OPTS="-Djava.security.auth.login.config=$KAFKA_CLIENT_JAAS $JVM_OPTS"
 
 
 printFullLog
