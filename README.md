@@ -35,6 +35,7 @@ For user running the benchmark:
 * create */user/{user}* directory
 * if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
 * give the user read/write access to Hive *default* database
+* if Kerberos is enabled: https://github.com/stanislawbartkowski/HiBench/blob/master/README.md#users
 ## Configure *Hive*
 Ambari console->Hive->Advanced->Custom hive-site.xml<br>
 Add property (pay attention to | as field delimiter)
@@ -281,7 +282,24 @@ hibench.benchjaas jaas/bench.keytab
 Make sure that user running the benchmark is authorized:
 * *yarn* : submit jobs in *root.default* queue
 * *hive* : read/write access in *default* database
-* *kafka* : create and write topics
+* *kafka* : create and write all topics
+
+If Ranger is not installed:
+*yarn* authorization can be done through *YARN Queue Manager* panel.<br>
+
+*kafka* privileges can be assigned using command line (assuming user *bench*)<br>
+>/usr/hdp/3.1.0.0-78/kafka/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=\<zookeeper hosts\> -add --allow-principal User:bench  --operation All --operation Write --topic '*'<br>
+
+> /usr/hdp/3.1.0.0-78/kafka/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=\<zookeeper hosts\> -add --allow-principal User:bench --operation All --group '*'<br>
+
+Verify:<br>
+
+> /usr/hdp/3.1.0.0-78/kafka/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=\<zookeeper hosts\> --list
+
+
+
+
+
 ## Prepare *jaas* file to run distribute Spark/Kafka streaming job
 Next step is to prepare Kerberos *keytab* file and JAAS policy file. It is described here: https://github.com/stanislawbartkowski/SampleSparkStreaming/blob/master/README.md#kerberos-keytab<br>
  
