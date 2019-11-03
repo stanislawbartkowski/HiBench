@@ -288,12 +288,10 @@ useTicketCache=true
 renewTicket=true
 serviceName="kafka";
 };
-
 ```
 Modify *hibench.kafkaclientjaas* parameter to point to this file.
 ```
 hibench.kafkaclientjaas jaas/kafka_client_jaas.conf
-
 ```
 ## Users
 Make sure that user running the benchmark is authorized:
