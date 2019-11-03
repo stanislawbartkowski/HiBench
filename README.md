@@ -267,6 +267,13 @@ Please input the topic:
 Enter the latest topic and get the result as csv file.
 
 # Kerberos
+## Prepare *jaas* file to run distribute Spark/Kafka streaming job
+Next step is to prepare Kerberos *keytab* file and JAAS policy file. It is described here: https://github.com/stanislawbartkowski/SampleSparkStreaming/blob/master/README.md#kerberos-keytab<br>
+ 
+Assume:
+* jaas/bench.keytab : keytab file
+* jaas/bench_jaas.conf : JAAS policy file
+
 ## Configuration
 Modify *security* parameter to *kerberos*. 
 > vi conf/hibench.com
@@ -280,7 +287,7 @@ hibench.benchjaas jaas/testuser_jaas.conf
 hibench.kafkaclientjaas /etc/kafka/conf/kafka_client_jaas.conf 
 ```
 If HiBench is executed on the host where Kafka Broker is not installed, prepare custom *kafka_client_jaas.conf* file.<br>
-> jaas/kafka_client_jaas.conf<br>
+> vi aas/kafka_client_jaas.conf<br>
 ```
 KafkaClient {
 com.sun.security.auth.module.Krb5LoginModule required
@@ -310,11 +317,3 @@ If Ranger is not installed:
 Verify:<br>
 
 > /usr/hdp/3.1.0.0-78/kafka/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=\<zookeeper hosts\> --list
-
-
-## Prepare *jaas* file to run distribute Spark/Kafka streaming job
-Next step is to prepare Kerberos *keytab* file and JAAS policy file. It is described here: https://github.com/stanislawbartkowski/SampleSparkStreaming/blob/master/README.md#kerberos-keytab<br>
- 
-Assume:
-* jaas/bench.keytab : keytab file
-* jaas/bench_jaas.conf : JAAS policy file
