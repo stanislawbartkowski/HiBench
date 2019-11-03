@@ -275,8 +275,25 @@ Modify *security* parameter to *kerberos*.
 # kerberos,nonsecure
 hibench.security        kerberos
 # only if kerberos is set, used for spark streaming, distribute computing
-hibench.benchkeytab jaas/bench_jaas.conf
-hibench.benchjaas jaas/bench.keytab
+hibench.benchkeytab jaas/testuser.keytab
+hibench.benchjaas jaas/testuser_jaas.conf
+hibench.kafkaclientjaas /etc/kafka/conf/kafka_client_jaas.conf 
+```
+If HiBench is executed on the host where Kafka Broker is not installed, prepare custom *kafka_client_jaas.conf* file.<br>
+> jaas/kafka_client_jaas.conf<br>
+```
+KafkaClient {
+com.sun.security.auth.module.Krb5LoginModule required
+useTicketCache=true
+renewTicket=true
+serviceName="kafka";
+};
+
+```
+Modify *hibench.kafkaclientjaas* parameter to point to this file.
+```
+hibench.kafkaclientjaas jaas/kafka_client_jaas.conf
+
 ```
 ## Users
 Make sure that user running the benchmark is authorized:
@@ -295,9 +312,6 @@ If Ranger is not installed:
 Verify:<br>
 
 > /usr/hdp/3.1.0.0-78/kafka/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=\<zookeeper hosts\> --list
-
-
-
 
 
 ## Prepare *jaas* file to run distribute Spark/Kafka streaming job
