@@ -35,6 +35,7 @@ For user running the benchmark:
 * create */user/{user}* directory
 * if Ranger is enabled, give the user privileges : *submitjob* and *admin-queue*
 * give the user read/write access to Hive *default* database
+* give the user full access to /tmp/hibench HDFS directory. The same for *hive* service user.
 * if Kerberos is enabled: https://github.com/stanislawbartkowski/HiBench/blob/master/README.md#users
 ## Configure *Hive*
 Ambari console->Hive->Advanced->Custom hive-site.xml<br>
